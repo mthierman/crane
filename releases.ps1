@@ -40,9 +40,9 @@ foreach ($package in $packages)
         }
         else
         {
-            gh release download -p $($crane.tag) -R nlohmann/json --clobber
-            [System.IO.Compression.ZipFile]::ExtractToDirectory($($crane.tag), "libs/$($crane.user)")
-            if (Test-Path $($crane.tag)) { Remove-Item -Path $($crane.tag) -Force }
+            gh release download -p "$($crane.tag)" -R "$($crane.user)/$($crane.repo)" --clobber
+            [System.IO.Compression.ZipFile]::ExtractToDirectory($($crane.tag), "libs/$($crane.user)/$($crane.repo)")
+            if (Test-Path "$($crane.tag)") { Remove-Item -Path "$($crane.tag)" -Force }
         }
     }
 }
