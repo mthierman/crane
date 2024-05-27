@@ -2,7 +2,9 @@
 
 $json = Get-Content -Path ".\github.json" | ConvertFrom-Json
 # $json | Get-Member
-$json.repos.'pnggroup/libpng'
+# $json.repos.'pnggroup/libpng'
+# $json | ForEach-Object { $_.repos }
+$json.repos | ForEach-Object { $_ } | Format-List
 
 # $tag = "v1.6.43"
 # Invoke-WebRequest -Uri "https://github.com/pnggroup/libpng/archive/refs/tags/$tag.zip" | ForEach-Object { [System.IO.Compression.ZipFile]::ExtractToDirectory($_.RawContentStream, "libpng") }

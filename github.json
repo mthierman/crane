@@ -1,5 +1,9 @@
 {
     "repos": {
+        "nlohmann/json": {
+            "strategy": "clone",
+            "tag": "v3.11.3"
+        },
         "pnggroup/libpng": {
             "strategy": "clone",
             "tag": "v1.6.43"
