@@ -8,7 +8,7 @@ foreach ($package in $packages)
 
     if ($split[0] -eq "gh")
     {
-        $split = $package -split '[:/]'
+        $split = $package -split '[:/@]'
 
         $crane = [pscustomobject]@{
             protocol = $split[0]
@@ -66,6 +66,9 @@ foreach ($package in $packages)
     }
     else
     {
+        $split
+        Write-Host "Downloading $($split[1])..."
+
         $request = Invoke-WebRequest -Uri $split[1] -SkipHttpErrorCheck
 
         if ($request.StatusCode -eq "200")
