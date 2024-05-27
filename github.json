@@ -1,0 +1,8 @@
+{
+    "repos": {
+        "pnggroup/libpng": {
+            "strategy": "clone",
+            "tag": "v1.6.43"
+        }
+    }
+}
