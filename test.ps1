@@ -1,5 +1,7 @@
 $packages = Get-Content -Path ".\test.json" | ConvertFrom-Json
 
+if (Test-Path "libs") { Remove-Item "libs" -Force -Recurse }
+
 foreach ($package in $packages)
 {
     $split = $package -split '[@/]'
