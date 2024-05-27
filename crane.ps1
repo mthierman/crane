@@ -1,4 +1,4 @@
-$packages = Get-Content -Path ".\crane.json" | ConvertFrom-Json
+$packages = Get-Content -Path ".\crane.jsonc" | ConvertFrom-Json
 
 if (Test-Path "libs") { Remove-Item "libs" -Force -Recurse }
 
