@@ -2,14 +2,14 @@
 
 $json = Get-Content -Path ".\github.json" | ConvertFrom-Json
 
-$list = $json.PSObject.Properties.Value | ForEach-Object { 
+$json.PSObject.Properties.Value | ForEach-Object -Process {
+    Write-Host $_.PSObject.Properties.Name
+    Write-Host $_.PSObject.Properties.Value
     # $_.PSObject.Properties.Name
     # $_.PSObject.Properties.Value
     # $_.PSObject.Properties.Name
-    @{URL = "https://github.com/$($_.PSObject.Properties.Name)/archive/refs/tags/$($_.PSObject.Properties.Value.tag).zip" }
+    # "https://github.com/$($_.PSObject.Properties.Name)/archive/refs/tags/$($_.PSObject.Properties.Value.tag).zip"
 }
-
-$list
 
 # $json.PSObject.Properties.Value
 
