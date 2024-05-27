@@ -1,14 +1,12 @@
-{
-    "packages": [
-        {
-            "user": "nlohmann",
-            "repo": "json",
-            "tag": "v3.11.3"
-        },
-        {
-            "user": "ada-url",
-            "repo": "ada",
-            "tag": "v2.7.8"
-        }
-    ]
-}
+[
+    {
+        "user": "nlohmann",
+        "repo": "json",
+        "tag": "v3.11.3"
+    },
+    {
+        "user": "ada-url",
+        "repo": "ada",
+        "tag": "v2.7.8"
+    }
+]
