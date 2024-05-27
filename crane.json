@@ -1,12 +1,8 @@
 [
-    {
-        "user": "nlohmann",
-        "repo": "json",
-        "tag": "v3.11.3"
-    },
-    {
-        "user": "ada-url",
-        "repo": "ada",
-        "tag": "v2.7.8"
-    }
+    "nlohmann/json@develop",
+    "nlohmann/json@include.zip",
+    "ada-url/ada@v2.7.8",
+    "sqlite/sqlite@version-3.46.0",
+    "microsoft/wil@master",
+    "microsoft/cppwinrt@master"
 ]
