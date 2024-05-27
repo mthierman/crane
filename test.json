@@ -1,1 +1,7 @@
-["nlohmann/json@develop", "ada-url/ada@v2.7.8", "sqlite/sqlite@version-3.46.0"]
+[
+    "nlohmann/json@develop",
+    "ada-url/ada@v2.7.8",
+    "sqlite/sqlite@version-3.46.0",
+    "microsoft/wil@master",
+    "microsoft/cppwinrt@master"
+]
