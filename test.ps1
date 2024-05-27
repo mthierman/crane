@@ -10,9 +10,32 @@ foreach ($package in $packages)
         tag  = $split[2]
     }
 
-    $obj | Format-List
+    $crane | Format-List
 
-    $url = "https://github.com/$user/$repo/archive/refs/tags/$tag.zip"
-    
-    Invoke-WebRequest -Uri $url | ForEach-Object { [System.IO.Compression.ZipFile]::ExtractToDirectory($_.RawContentStream, "libs/$user") }
+    $tags = "https://github.com/$($crane.user)/$($crane.repo)/archive/refs/tags/$($crane.tag).zip"
+    $heads = "https://github.com/$($crane.user)/$($crane.repo)/archive/refs/heads/$($crane.tag).zip"
+
+    $request = Invoke-WebRequest -Uri $tags -SkipHttpErrorCheck
+
+    if ($request.StatusCode -eq "200")
+    {
+        foreach ($response in $request)
+        {
+            $response.StatusCode
+            [System.IO.Compression.ZipFile]::ExtractToDirectory($response.RawContentStream, "libs/$($crane.user)")
+        }
+    }
+    else
+    {
+        $request = Invoke-WebRequest -Uri $heads -SkipHttpErrorCheck
+
+        if ($request.StatusCode -eq "200")
+        {
+            foreach ($response in $request)
+            {
+                $response.StatusCode
+                [System.IO.Compression.ZipFile]::ExtractToDirectory($response.RawContentStream, "libs/$($crane.user)")
+            }
+        }
+    }
 }
