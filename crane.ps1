@@ -6,7 +6,21 @@ foreach ($package in $packages)
 {
     $split = $package -split ':', 2
 
-    if ($split[0] -eq "gh")
+    if ($split[0] -eq "nuget")
+    {
+        $split = $package -split '[:@]'
+
+        $crane = [pscustomobject]@{
+            protocol = $split[0]
+            package  = $split[1]
+            version  = $split[2]
+        }
+
+        $crane | Format-List
+
+        nuget install $($crane.package) -Version $($crane.version) -OutputDirectory "libs"
+    }
+    elseif ($split[0] -eq "gh")
     {
         $split = $package -split '[:/@]'
 
