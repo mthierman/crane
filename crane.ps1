@@ -1,8 +1,8 @@
-$packages = Get-Content -Path ".\crane.jsonc" | ConvertFrom-Json
+$manifest = Get-Content -Path ".\crane.jsonc" | ConvertFrom-Json
 
 if (Test-Path "libs") { Remove-Item "libs" -Force -Recurse }
 
-foreach ($package in $packages)
+foreach ($package in $manifest.packages)
 {
     $split = $package -split ':', 2
 
