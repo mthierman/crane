@@ -1,7 +1,7 @@
 {
     "packages": [
-        // "gh:nlohmann/json@develop"
-        // "gh:nlohmann/json@v3.11.3/include.zip"
+        // "gh:nlohmann/json@develop",
+        // "gh:nlohmann/json@v3.11.3/include.zip",
         // "gh:ada-url/ada@main",
         // "gh:ada-url/ada@v2.7.8/singleheader.zip",
         // "gh:sqlite/sqlite@version-3.46.0",
@@ -11,7 +11,7 @@
         // "nuget:Microsoft.Web.WebView2@1.0.2478.35",
         // "nuget:Microsoft.Windows.CppWinRT@2.0.240405.15",
         // "nuget:Microsoft.Windows.ImplementationLibrary@1.0.240122.1",
-        "gh:mthierman/cmake-modules@main",
-        "gh:curl/curl@curl-8_8_0/curl-8.8.0.zip"
+        // "gh:mthierman/cmake-modules@main",
+        // "gh:curl/curl@curl-8_8_0/curl-8.8.0.zip",
     ]
 }
