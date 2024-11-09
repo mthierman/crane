@@ -10,6 +10,7 @@ list(
 
 include(FetchContent)
 include(Glow)
+include(nlohmann.json)
 
 add_executable(${PROJECT_NAME})
 
@@ -49,4 +50,8 @@ target_link_options(
 
 target_sources(${PROJECT_NAME} PRIVATE "src/main.cxx")
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glow::glow)
+target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE glow::glow
+            nlohmann::json
+    )
