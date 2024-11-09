@@ -25,8 +25,6 @@ auto main() -> int {
     //         "https://github.com/mthierman/crane/archive/refs/heads/main.zip", *path);
     // }
 
-    //
-
     if (auto path { glow::filesystem::known_folder() }) {
         *path = *path / L"crane" / L"crane.json";
 
