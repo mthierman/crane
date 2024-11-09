@@ -32,7 +32,14 @@ auto main() -> int {
             auto manifest { json::parse(stream).get<Manifest>() };
 
             for (auto& package : manifest.packages) {
-                std::cout << package << std::endl;
+                // std::cout << package << std::endl;
+
+                if (package.starts_with("gh:")) {
+                    std::cout << package << std::endl;
+
+                    // Need to split the string with delimitet somehow...
+                    // https://unicode-org.github.io/icu/userguide/strings/regexp.html#using-split
+                }
             }
         }
     }
