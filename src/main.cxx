@@ -2,6 +2,8 @@
 
 #include <stdlib.h>
 
+#include <nlohmann/json.hpp>
+
 auto main() -> int {
     if (auto path { glow::filesystem::known_folder(FOLDERID_Downloads) }) {
         *path = *path / L"test.zip";

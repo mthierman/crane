@@ -9,7 +9,7 @@ list(
     )
 
 include(FetchContent)
-include(Glow)
+include(mthierman.glow)
 include(nlohmann.json)
 
 add_executable(${PROJECT_NAME})
