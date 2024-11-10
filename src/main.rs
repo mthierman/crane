@@ -59,19 +59,40 @@ fn main() {
 
                         let split: Vec<&str> = split[1].split("@").collect();
                         let repo = split[0];
-                        let tag = split[1];
+                        let branch = split[1];
 
-                        println!("Installing {} {} {}", owner, repo, tag);
+                        println!("Installing {} {} {}", owner, repo, branch);
 
-                        // let repo = split[1].split("@").next().unwrap();
-                        // let branch = split[1].split("@").nth(1).unwrap();
-                        // println!("Installing {}@{}", repo, branch);
+                        let mut current_dir = package_cache.clone();
+                        current_dir.push(owner);
 
-                        // Command::new("gh")
-                        //     .current_dir(&package_cache)
-                        //     .args(["repo", "clone", repo, "--", "--branch", branch, "--depth=1"])
-                        //     .output()
-                        //     .unwrap();
+                        if !current_dir.exists() {
+                            create_dir_all(&current_dir).unwrap();
+                        }
+
+                        let repo_to_clone: String = owner.to_owned() + "/" + repo;
+                        let out_dir = repo.to_owned() + "/" + branch;
+
+                        println!(
+                            "current_dir: {} out_dir: {}",
+                            &current_dir.display(),
+                            &out_dir
+                        );
+
+                        Command::new("gh")
+                            .current_dir(&current_dir)
+                            .args([
+                                "repo",
+                                "clone",
+                                &repo_to_clone,
+                                &out_dir,
+                                "--",
+                                "--branch",
+                                &branch,
+                                "--depth=1",
+                            ])
+                            .output()
+                            .unwrap();
 
                         // let split: Vec<&str> = repo.split("/").collect();
                         // let mut original = package_cache.clone();
