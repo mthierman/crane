@@ -10,6 +10,8 @@ use std::process::Command;
 
 // use windows::{Win32::Foundation::*, Win32::UI::Shell::*};
 
+mod win;
+
 #[derive(Deserialize, Debug)]
 struct Manifest {
     packages: Vec<String>,
@@ -30,6 +32,8 @@ fn main() {
     // };
 
     // let path: PathBuf = [result.as_str(), "crane", "crane.json"].iter().collect();
+
+    let app_data = win::app_data();
 
     let path = PathBuf::from("crane.json");
     let output_directory = PathBuf::from("crane_packages");
