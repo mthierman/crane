@@ -56,26 +56,22 @@ fn main() {
                         let branch = split[1].split("@").nth(1).unwrap();
                         println!("Installing {}@{}", repo, branch);
 
-                        let output = Command::new("gh")
+                        Command::new("gh")
                             .current_dir(&package_cache)
                             .args(["repo", "clone", repo, "--", "--branch", branch, "--depth=1"])
                             .output()
                             .unwrap();
-                        // let printout = String::from_utf8(output.stdout).unwrap();
-                        // println!("{}", printout);
                     }
                     "nuget" => {
                         let package = split[1].split("@").next().unwrap();
                         let version = split[1].split("@").nth(1).unwrap();
                         println!("Installing {}@{}...", package, version);
 
-                        let output = Command::new("nuget")
+                        Command::new("nuget")
                             .current_dir(&package_cache)
                             .args(["install", package, "-Version", version])
                             .output()
                             .unwrap();
-                        // let printout = String::from_utf8(output.stdout).unwrap();
-                        // println!("{}", printout);
                     }
                     _ => {
                         println!("ERROR!")
