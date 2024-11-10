@@ -38,11 +38,11 @@ fn main() {
         create_dir_all(&package_cache).unwrap();
     }
 
-    let file = File::open(&PathBuf::from("crane.json"));
+    let manifest_file = File::open(&PathBuf::from("crane.json"));
 
-    match file {
+    match manifest_file {
         Ok(_) => {
-            let reader = BufReader::new(file.unwrap());
+            let reader = BufReader::new(manifest_file.unwrap());
 
             let u = serde_json::from_reader::<_, Manifest>(reader).unwrap();
 
