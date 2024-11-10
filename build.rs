@@ -36,7 +36,7 @@ fn compile_resource(path: PathBuf) {
 
 fn embed_manifest(path: PathBuf) {
     if !path.exists() {
-        println!("cargo:warning={}", "Manifest not found");
+        println!("cargo:warning={} not found", path.display());
     } else {
         println!("cargo::rustc-link-arg-bins=/MANIFEST:EMBED");
         println!(
