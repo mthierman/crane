@@ -46,7 +46,6 @@ fn main() {
                         let branch = split[1].split("@").nth(1).unwrap();
                         println!("{} - {}", repo, branch);
 
-                        // let output_directory = PathBuf::from("crane_packages");
                         let output_directory: PathBuf = ["crane_packages", repo].iter().collect();
 
                         if !output_directory.exists() {
