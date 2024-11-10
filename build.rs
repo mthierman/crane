@@ -14,7 +14,7 @@ fn root() -> String {
 
 fn embed_manifest(path: PathBuf) {
     if !path.exists() {
-        println!("cargo:warning={}", "Manifest not found")
+        println!("cargo:warning={}", "Manifest not found");
     } else {
         println!("cargo::rustc-link-arg-bins=/MANIFEST:EMBED");
         println!(
@@ -26,7 +26,7 @@ fn embed_manifest(path: PathBuf) {
 
 fn compile_resource(path: PathBuf) {
     if !path.exists() {
-        println!("cargo:warning={}", "RC not found")
+        println!("cargo:warning={}", "RC not found");
     } else {
         let res_file = path.file_stem().unwrap().to_str().unwrap().to_owned() + ".res";
         let res: PathBuf = [root().as_str(), "target", res_file.as_str()]
