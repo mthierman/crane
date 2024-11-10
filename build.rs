@@ -2,10 +2,6 @@ use std::env;
 use std::path::*;
 use std::process::*;
 
-fn linker_options(flags: &str) {
-    println!("cargo::rustc-link-arg-bins={}", flags);
-}
-
 fn root() -> String {
     let root = env::current_dir()
         .unwrap()
@@ -47,7 +43,8 @@ fn embed_manifest(path: PathBuf) {
 }
 
 fn main() {
-    linker_options("/WX");
+    println!("cargo::rustc-link-arg-bins=/WX");
+    // println!("cargo::rustc-link-arg-bins=/LINKREPROFULLPATHRSP:crane.rsp");
 
     let rc: PathBuf = [root().as_str(), "data", "app.rc"].iter().collect();
     compile_resource(rc);
