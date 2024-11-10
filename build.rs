@@ -47,8 +47,6 @@ fn embed_manifest(path: PathBuf) {
 }
 
 fn main() {
-    // println!("cargo:rerun-if-changed=build.rs");
-
     linker_options("/WX");
 
     let rc: PathBuf = [root().as_str(), "data", "app.rc"].iter().collect();
