@@ -2,6 +2,16 @@ use std::env;
 use std::path::*;
 use std::process::Command;
 
+fn root() -> String {
+    let root = env::current_dir()
+        .unwrap()
+        .into_os_string()
+        .into_string()
+        .unwrap();
+
+    root
+}
+
 fn embed_manifest(path: PathBuf) {
     if !path.exists() {
         println!("cargo:warning={}", "Manifest not found")
@@ -18,16 +28,13 @@ fn compile_resource(path: PathBuf) {
     if !path.exists() {
         println!("cargo:warning={}", "RC not found")
     } else {
-        let current_dir = env::current_dir().unwrap();
-
-        let mut filename = String::from(path.file_stem().unwrap().to_str().unwrap());
-        filename.push_str(".res");
-
-        let mut res = current_dir.clone();
-        res.push(format!("target/{}", filename));
+        let filename = path.file_stem().unwrap().to_str().unwrap().to_owned() + ".res";
+        let res: PathBuf = [root().as_str(), "target", filename.as_str()]
+            .iter()
+            .collect();
 
         Command::new("rc")
-            .args(["/fo", "target/app.res", path.to_str().unwrap()])
+            .args(["/fo", res.to_str().unwrap(), path.to_str().unwrap()])
             .status()
             .unwrap();
 
@@ -40,16 +47,10 @@ fn linker_options(flags: &str) {
 }
 
 fn main() {
-    let root = env::current_dir()
-        .unwrap()
-        .into_os_string()
-        .into_string()
-        .unwrap();
-
-    let manifest: PathBuf = [root.as_str(), "data", "app.manifest"].iter().collect();
+    let manifest: PathBuf = [root().as_str(), "data", "app.manifest"].iter().collect();
     embed_manifest(manifest);
 
-    let rc: PathBuf = [root.as_str(), "data", "app.rc"].iter().collect();
+    let rc: PathBuf = [root().as_str(), "data", "app.rc"].iter().collect();
     compile_resource(rc);
 
     linker_options("/WX");
