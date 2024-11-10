@@ -18,21 +18,7 @@ struct Manifest {
 }
 
 fn main() {
-    // let result: String;
-
-    // unsafe {
-    //     result = SHGetKnownFolderPath(
-    //         &FOLDERID_LocalAppData,
-    //         KNOWN_FOLDER_FLAG::default(),
-    //         HANDLE::default(),
-    //     )
-    //     .unwrap()
-    //     .to_string()
-    //     .unwrap();
-    // };
-
     // let path: PathBuf = [result.as_str(), "crane", "crane.json"].iter().collect();
-
     let app_data = win::app_data();
 
     let path = PathBuf::from("crane.json");
@@ -49,26 +35,6 @@ fn main() {
 
         match split[0] {
             "gh" => {
-                // let owner = split[1].split("/").nth(0).unwrap();
-
-                // let repo = split[1]
-                //     .split("/")
-                //     .nth(1)
-                //     .unwrap()
-                //     .split("@")
-                //     .nth(0)
-                //     .unwrap();
-
-                // let branch = split[1]
-                //     .split("/")
-                //     .nth(1)
-                //     .unwrap()
-                //     .split("@")
-                //     .nth(1)
-                //     .unwrap();
-
-                // println!("{} - {} - {}", owner, repo, branch);
-
                 let repo = split[1].split("@").next().unwrap();
                 let branch = split[1].split("@").nth(1).unwrap();
                 println!("{} - {}", repo, branch);
@@ -80,17 +46,6 @@ fn main() {
                     .unwrap();
                 let printout = String::from_utf8(output.stdout).unwrap();
                 println!("{}", printout);
-
-                // let clone_url = "https://github.com/nlohmann/json.git";
-                // let mut clone_url = String::from("https://github.com/");
-                // clone_url.push_str(owner);
-                // clone_url.push_str("/");
-                // clone_url.push_str(repo);
-                // clone_url.push_str(".git");
-                // println!("{}", clone_url);
-                // let output = Command::new("git").args(["status"]).output().unwrap();
-                // let printout = String::from_utf8(output.stdout).unwrap();
-                // println!("{}", printout);
             }
             "nuget" => {
                 let package = split[1].split("@").next().unwrap();
