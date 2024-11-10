@@ -46,8 +46,15 @@ fn main() {
                         let branch = split[1].split("@").nth(1).unwrap();
                         println!("{} - {}", repo, branch);
 
+                        // let output_directory = PathBuf::from("crane_packages");
+                        let output_directory: PathBuf = ["crane_packages", repo].iter().collect();
+
+                        if !output_directory.exists() {
+                            let _ = create_dir_all(&output_directory);
+                        }
+
                         let output = Command::new("gh")
-                            .current_dir("crane_packages")
+                            .current_dir(&output_directory)
                             .args(["repo", "clone", repo, "--", "--branch", branch, "--depth=1"])
                             .output()
                             .unwrap();
