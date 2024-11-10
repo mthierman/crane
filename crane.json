@@ -1,0 +1,6 @@
+{
+    "packages": [
+        "gh:nlohmann/json@develop",
+        "nuget:Microsoft.Web.WebView2@1.0.2849.39"
+    ]
+}
