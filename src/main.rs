@@ -2,6 +2,9 @@
 // https://docs.rs/serde_json/latest/serde_json/fn.from_reader.html
 // https://doc.rust-lang.org/rust-by-example/flow_control/for.html
 
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
 use serde::Deserialize;
 use std::fs::*;
 use std::io::BufReader;
@@ -18,15 +21,16 @@ struct Manifest {
 }
 
 fn main() {
-    // let path: PathBuf = [result.as_str(), "crane", "crane.json"].iter().collect();
-    let app_data = win::app_data();
+    // let app_data = win::app_data();
+    let output_directory = PathBuf::from("crane_packages");
+
+    if !output_directory.exists() {
+        let _ = create_dir_all(output_directory);
+    }
 
     let path = PathBuf::from("crane.json");
-    let output_directory = PathBuf::from("crane_packages");
-    let _ = create_dir(output_directory).unwrap();
-
-    let file = File::open(path).unwrap();
-    let reader = BufReader::new(file);
+    let file = File::open(path);
+    let reader = BufReader::new(file.unwrap());
 
     let u = serde_json::from_reader::<_, Manifest>(reader).unwrap();
 
