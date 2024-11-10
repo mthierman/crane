@@ -5,6 +5,7 @@
 use serde::Deserialize;
 use std::fs::*;
 use std::io::BufReader;
+use std::os::windows::fs::symlink_dir;
 use std::path::PathBuf;
 use std::process::Command;
 use windows::{Win32::Foundation::HANDLE, Win32::UI::Shell::*};
@@ -61,6 +62,14 @@ fn main() {
                             .args(["repo", "clone", repo, "--", "--branch", branch, "--depth=1"])
                             .output()
                             .unwrap();
+
+                        let split: Vec<&str> = repo.split("/").collect();
+                        let mut original = package_cache.clone();
+                        original.push(split[0]);
+                        original.push(split[1]);
+                        println!("{}", original.display());
+
+                        // symlink_dir()
                     }
                     "nuget" => {
                         let package = split[1].split("@").next().unwrap();
