@@ -14,7 +14,7 @@ struct Manifest {
     packages: Vec<String>,
 }
 
-pub fn app_data() -> String {
+fn app_data() -> String {
     unsafe {
         SHGetKnownFolderPath(
             &FOLDERID_LocalAppData,
@@ -27,17 +27,18 @@ pub fn app_data() -> String {
     }
 }
 
-fn main() {
-    let cache: PathBuf = [app_data().as_str(), "crane", "packages"].iter().collect();
+fn package_cache() -> PathBuf {
+    [app_data().as_str(), "crane", "packages"].iter().collect()
+}
 
-    if !cache.exists() {
-        let _ = create_dir_all(&cache);
+fn main() {
+    let package_cache = package_cache();
+
+    if !package_cache.exists() {
+        create_dir_all(&package_cache).unwrap();
     }
 
-    let path = PathBuf::from("crane.json");
-    let file = File::open(&path);
-
-    // let file = File::open(&PathBuf::from("crane.json"));
+    let file = File::open(&PathBuf::from("crane.json"));
 
     match file {
         Ok(_) => {
