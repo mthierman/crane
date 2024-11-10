@@ -13,20 +13,25 @@ fn root() -> String {
 }
 
 fn compile_resource(path: PathBuf) {
-    if !path.exists() {
-        println!("cargo:warning={} not found", path.display());
+    let rc = Command::new("rc").status();
+    if rc.is_ok() {
+        if !path.exists() {
+            println!("cargo:warning={} not found", path.display());
+        } else {
+            let res_file = path.file_stem().unwrap().to_str().unwrap().to_owned() + ".res";
+            let res: PathBuf = [root().as_str(), "target", res_file.as_str()]
+                .iter()
+                .collect();
+
+            Command::new("rc")
+                .args(["/fo", res.to_str().unwrap(), path.to_str().unwrap()])
+                .status()
+                .unwrap();
+
+            println!("cargo::rustc-link-arg-bins={}", res.to_str().unwrap());
+        }
     } else {
-        let res_file = path.file_stem().unwrap().to_str().unwrap().to_owned() + ".res";
-        let res: PathBuf = [root().as_str(), "target", res_file.as_str()]
-            .iter()
-            .collect();
-
-        Command::new("rc")
-            .args(["/fo", res.to_str().unwrap(), path.to_str().unwrap()])
-            .status()
-            .unwrap();
-
-        println!("cargo::rustc-link-arg-bins={}", res.to_str().unwrap());
+        println!("cargo:warning=rc.exe not found");
     }
 }
 
