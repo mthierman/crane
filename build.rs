@@ -34,10 +34,36 @@ fn find_vs() {
         .output()
         .unwrap();
 
-    println!(
-        "cargo:warning={}",
-        String::from_utf8(output.stdout).unwrap()
-    );
+    // println!(
+    //     "cargo:warning={}",
+    //     String::from_utf8(output.stdout).unwrap()
+    // );
+
+    let installation_path: PathBuf = [
+        String::from_utf8(output.stdout).unwrap().as_str(),
+        "Common7",
+        "Tools",
+        "Launch-VsDevShell.ps1",
+        "-Arch",
+        "amd64",
+        "-HostArch",
+        "amd64",
+        "-SkipAutomaticLocation",
+    ]
+    .iter()
+    .collect();
+
+    Command::new("pwsh")
+        .args([
+            "&",
+            installation_path
+                .into_os_string()
+                .into_string()
+                .unwrap()
+                .as_str(),
+        ])
+        .status()
+        .unwrap();
 }
 
 fn embed_manifest(path: PathBuf) {
