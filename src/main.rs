@@ -29,44 +29,53 @@ fn main() {
     }
 
     let path = PathBuf::from("crane.json");
-    let file = File::open(path);
-    let reader = BufReader::new(file.unwrap());
+    let file = File::open(&path);
 
-    let u = serde_json::from_reader::<_, Manifest>(reader).unwrap();
+    match file {
+        Ok(_) => {
+            let reader = BufReader::new(file.unwrap());
 
-    for package in u.packages.iter() {
-        let split: Vec<&str> = package.split(":").collect();
+            let u = serde_json::from_reader::<_, Manifest>(reader).unwrap();
 
-        match split[0] {
-            "gh" => {
-                let repo = split[1].split("@").next().unwrap();
-                let branch = split[1].split("@").nth(1).unwrap();
-                println!("{} - {}", repo, branch);
+            for package in u.packages.iter() {
+                let split: Vec<&str> = package.split(":").collect();
 
-                let output = Command::new("gh")
-                    .current_dir("crane_packages")
-                    .args(["repo", "clone", repo, "--", "--branch", branch, "--depth=1"])
-                    .output()
-                    .unwrap();
-                let printout = String::from_utf8(output.stdout).unwrap();
-                println!("{}", printout);
+                match split[0] {
+                    "gh" => {
+                        let repo = split[1].split("@").next().unwrap();
+                        let branch = split[1].split("@").nth(1).unwrap();
+                        println!("{} - {}", repo, branch);
+
+                        let output = Command::new("gh")
+                            .current_dir("crane_packages")
+                            .args(["repo", "clone", repo, "--", "--branch", branch, "--depth=1"])
+                            .output()
+                            .unwrap();
+                        let printout = String::from_utf8(output.stdout).unwrap();
+                        println!("{}", printout);
+                    }
+                    "nuget" => {
+                        let package = split[1].split("@").next().unwrap();
+                        let version = split[1].split("@").nth(1).unwrap();
+                        println!("{} - {}", package, version);
+
+                        let output = Command::new("nuget")
+                            .current_dir("crane_packages")
+                            .args(["install", package, "-Version", version])
+                            .output()
+                            .unwrap();
+                        let printout = String::from_utf8(output.stdout).unwrap();
+                        println!("{}", printout);
+                    }
+                    _ => {
+                        println!("ERROR!")
+                    }
+                }
             }
-            "nuget" => {
-                let package = split[1].split("@").next().unwrap();
-                let version = split[1].split("@").nth(1).unwrap();
-                println!("{} - {}", package, version);
-
-                let output = Command::new("nuget")
-                    .current_dir("crane_packages")
-                    .args(["install", package, "-Version", version])
-                    .output()
-                    .unwrap();
-                let printout = String::from_utf8(output.stdout).unwrap();
-                println!("{}", printout);
-            }
-            _ => {
-                println!("ERROR!")
-            }
+        }
+        Err(_) => {
+            println!("crane.json doesn't exist...");
+            let _ = File::create(&path);
         }
     }
 }

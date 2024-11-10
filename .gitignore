@@ -2,5 +2,6 @@
 .wix
 build
 node_modules
+crane_packages
 
 CMakeUserPresets.json
