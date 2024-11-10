@@ -1,6 +1,6 @@
-// #![allow(unused_imports)]
-// #![allow(unused_variables)]
-// #![allow(dead_code)]
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
 
 use serde::Deserialize;
 use std::fs::*;
@@ -50,24 +50,34 @@ fn main() {
 
             for package in u.packages.iter() {
                 let split: Vec<&str> = package.split(":").collect();
+                let provider = split[0];
 
-                match split[0] {
+                match provider {
                     "gh" => {
-                        let repo = split[1].split("@").next().unwrap();
-                        let branch = split[1].split("@").nth(1).unwrap();
-                        println!("Installing {}@{}", repo, branch);
+                        let split: Vec<&str> = split[1].split("/").collect();
+                        let owner = split[0];
 
-                        Command::new("gh")
-                            .current_dir(&package_cache)
-                            .args(["repo", "clone", repo, "--", "--branch", branch, "--depth=1"])
-                            .output()
-                            .unwrap();
+                        let split: Vec<&str> = split[1].split("@").collect();
+                        let repo = split[0];
+                        let tag = split[1];
 
-                        let split: Vec<&str> = repo.split("/").collect();
-                        let mut original = package_cache.clone();
-                        original.push(split[0]);
-                        original.push(split[1]);
-                        println!("{}", original.display());
+                        println!("Installing {} {} {}", owner, repo, tag);
+
+                        // let repo = split[1].split("@").next().unwrap();
+                        // let branch = split[1].split("@").nth(1).unwrap();
+                        // println!("Installing {}@{}", repo, branch);
+
+                        // Command::new("gh")
+                        //     .current_dir(&package_cache)
+                        //     .args(["repo", "clone", repo, "--", "--branch", branch, "--depth=1"])
+                        //     .output()
+                        //     .unwrap();
+
+                        // let split: Vec<&str> = repo.split("/").collect();
+                        // let mut original = package_cache.clone();
+                        // original.push(split[0]);
+                        // original.push(split[1]);
+                        // println!("{}", original.display());
 
                         // symlink_dir()
                     }
@@ -76,11 +86,11 @@ fn main() {
                         let version = split[1].split("@").nth(1).unwrap();
                         println!("Installing {}@{}...", package, version);
 
-                        Command::new("nuget")
-                            .current_dir(&package_cache)
-                            .args(["install", package, "-Version", version])
-                            .output()
-                            .unwrap();
+                        // Command::new("nuget")
+                        //     .current_dir(&package_cache)
+                        //     .args(["install", package, "-Version", version])
+                        //     .output()
+                        //     .unwrap();
                     }
                     _ => {
                         println!("ERROR!")
