@@ -61,8 +61,6 @@ fn main() {
                         let repo = split[0];
                         let branch = split[1];
 
-                        println!("Installing {} {} {}", owner, repo, branch);
-
                         let mut current_dir = package_cache.clone();
                         current_dir.push(owner);
 
@@ -72,12 +70,6 @@ fn main() {
 
                         let repo_to_clone: String = owner.to_owned() + "/" + repo;
                         let out_dir = repo.to_owned() + "/" + branch;
-
-                        println!(
-                            "current_dir: {} out_dir: {}",
-                            &current_dir.display(),
-                            &out_dir
-                        );
 
                         Command::new("gh")
                             .current_dir(&current_dir)
@@ -96,11 +88,21 @@ fn main() {
 
                         // let split: Vec<&str> = repo.split("/").collect();
                         // let mut original = package_cache.clone();
+                        current_dir.push(repo);
+                        current_dir.push(branch);
                         // original.push(split[0]);
                         // original.push(split[1]);
                         // println!("{}", original.display());
 
-                        // symlink_dir()
+                        println!("{}", current_dir.display());
+                        let mut link = std::env::current_dir().unwrap();
+                        link.push("crane_packages");
+                        if !link.exists() {
+                            create_dir_all(&link).unwrap();
+                        }
+                        link.push(repo);
+
+                        symlink_dir(current_dir, link).unwrap();
                     }
                     "nuget" => {
                         let package = split[1].split("@").next().unwrap();
