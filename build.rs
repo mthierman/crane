@@ -12,6 +12,34 @@ fn root() -> String {
     root
 }
 
+fn find_vs() {
+    let program_files = env::var("ProgramFiles(x86)").unwrap();
+
+    let vswhere: PathBuf = [
+        program_files.as_str(),
+        "Microsoft Visual Studio",
+        "Installer",
+        "vswhere.exe",
+    ]
+    .iter()
+    .collect();
+
+    // println!(
+    //     "cargo:warning={}",
+    //     vswhere.into_os_string().into_string().unwrap()
+    // );
+
+    let output = Command::new(vswhere)
+        .args(["-products", "*", "-latest", "-property", "installationPath"])
+        .output()
+        .unwrap();
+
+    println!(
+        "cargo:warning={}",
+        String::from_utf8(output.stdout).unwrap()
+    );
+}
+
 fn embed_manifest(path: PathBuf) {
     if !path.exists() {
         println!("cargo:warning={}", "Manifest not found");
@@ -47,6 +75,8 @@ fn linker_options(flags: &str) {
 }
 
 fn main() {
+    find_vs();
+
     let manifest: PathBuf = [root().as_str(), "data", "app.manifest"].iter().collect();
     embed_manifest(manifest);
 
