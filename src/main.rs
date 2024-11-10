@@ -9,11 +9,9 @@ use std::path::PathBuf;
 use std::process::Command;
 
 mod win {
-    use std::path::PathBuf;
     use windows::{Win32::Foundation::HANDLE, Win32::UI::Shell::*};
 
-    #[allow(dead_code)]
-    pub fn app_data() -> PathBuf {
+    pub fn app_data() -> String {
         let result: String;
 
         unsafe {
@@ -27,7 +25,7 @@ mod win {
             .unwrap();
         };
 
-        [result.as_str(), "crane"].iter().collect()
+        result
     }
 }
 
@@ -37,8 +35,7 @@ struct Manifest {
 }
 
 fn main() {
-    // let app_data = win::app_data();
-    let output_directory = PathBuf::from("crane_packages");
+    let output_directory: PathBuf = [win::app_data().as_str(), "packages"].iter().collect();
 
     if !output_directory.exists() {
         let _ = create_dir_all(output_directory);
