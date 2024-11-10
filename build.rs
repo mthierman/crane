@@ -15,17 +15,17 @@ fn embed_manifest(path: PathBuf) {
 }
 
 fn compile_resource(path: PathBuf) {
-    let current_dir = env::current_dir().unwrap();
-
-    let mut filename = String::from(path.file_stem().unwrap().to_str().unwrap());
-    filename.push_str(".res");
-
-    let mut res = current_dir.clone();
-    res.push(format!("target/{}", filename));
-
     if !path.exists() {
         println!("cargo:warning={}", "RC not found")
     } else {
+        let current_dir = env::current_dir().unwrap();
+
+        let mut filename = String::from(path.file_stem().unwrap().to_str().unwrap());
+        filename.push_str(".res");
+
+        let mut res = current_dir.clone();
+        res.push(format!("target/{}", filename));
+
         Command::new("rc")
             .args(["/fo", "target/app.res", path.to_str().unwrap()])
             .status()
