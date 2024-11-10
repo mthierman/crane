@@ -1,6 +1,7 @@
 // #![allow(unused_imports)]
 // #![allow(unused_variables)]
 // #![allow(dead_code)]
+
 use serde::Deserialize;
 use std::fs::*;
 use std::io::BufReader;
@@ -13,7 +14,6 @@ mod win {
 
     #[allow(dead_code)]
     pub fn app_data() -> PathBuf {
-        // let path: PathBuf;
         let result: String;
 
         unsafe {
