@@ -1,19 +1,35 @@
-// https://stackoverflow.com/questions/26643688/how-do-i-split-a-string-in-rust
-// https://docs.rs/serde_json/latest/serde_json/fn.from_reader.html
-// https://doc.rust-lang.org/rust-by-example/flow_control/for.html
-
-#![allow(unused_imports)]
-#![allow(unused_variables)]
-#![allow(dead_code)]
+// #![allow(unused_imports)]
+// #![allow(unused_variables)]
+// #![allow(dead_code)]
 use serde::Deserialize;
 use std::fs::*;
 use std::io::BufReader;
 use std::path::PathBuf;
 use std::process::Command;
 
-// use windows::{Win32::Foundation::*, Win32::UI::Shell::*};
+mod win {
+    use std::path::PathBuf;
+    use windows::{Win32::Foundation::HANDLE, Win32::UI::Shell::*};
 
-mod win;
+    #[allow(dead_code)]
+    pub fn app_data() -> PathBuf {
+        // let path: PathBuf;
+        let result: String;
+
+        unsafe {
+            result = SHGetKnownFolderPath(
+                &FOLDERID_LocalAppData,
+                KNOWN_FOLDER_FLAG::default(),
+                HANDLE::default(),
+            )
+            .unwrap()
+            .to_string()
+            .unwrap();
+        };
+
+        [result.as_str(), "crane"].iter().collect()
+    }
+}
 
 #[derive(Deserialize, Debug)]
 struct Manifest {
