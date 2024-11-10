@@ -28,8 +28,8 @@ fn compile_resource(path: PathBuf) {
     if !path.exists() {
         println!("cargo:warning={}", "RC not found")
     } else {
-        let filename = path.file_stem().unwrap().to_str().unwrap().to_owned() + ".res";
-        let res: PathBuf = [root().as_str(), "target", filename.as_str()]
+        let res_file = path.file_stem().unwrap().to_str().unwrap().to_owned() + ".res";
+        let res: PathBuf = [root().as_str(), "target", res_file.as_str()]
             .iter()
             .collect();
 
