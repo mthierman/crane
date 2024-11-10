@@ -15,26 +15,20 @@ struct Manifest {
 }
 
 pub fn app_data() -> String {
-    let result: String;
-
     unsafe {
-        result = SHGetKnownFolderPath(
+        SHGetKnownFolderPath(
             &FOLDERID_LocalAppData,
             KNOWN_FOLDER_FLAG::default(),
             HANDLE::default(),
         )
         .unwrap()
         .to_string()
-        .unwrap();
-    };
-
-    result
+        .unwrap()
+    }
 }
 
 fn main() {
-    let cache: PathBuf = [win::app_data().as_str(), "crane", "packages"]
-        .iter()
-        .collect();
+    let cache: PathBuf = [app_data().as_str(), "crane", "packages"].iter().collect();
 
     if !cache.exists() {
         let _ = create_dir_all(&cache);
