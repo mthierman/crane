@@ -7,42 +7,43 @@ use std::fs::*;
 use std::io::BufReader;
 use std::path::PathBuf;
 use std::process::Command;
-
-mod win {
-    use windows::{Win32::Foundation::HANDLE, Win32::UI::Shell::*};
-
-    pub fn app_data() -> String {
-        let result: String;
-
-        unsafe {
-            result = SHGetKnownFolderPath(
-                &FOLDERID_LocalAppData,
-                KNOWN_FOLDER_FLAG::default(),
-                HANDLE::default(),
-            )
-            .unwrap()
-            .to_string()
-            .unwrap();
-        };
-
-        result
-    }
-}
+use windows::{Win32::Foundation::HANDLE, Win32::UI::Shell::*};
 
 #[derive(Deserialize, Debug)]
 struct Manifest {
     packages: Vec<String>,
 }
 
-fn main() {
-    let output_directory: PathBuf = [win::app_data().as_str(), "packages"].iter().collect();
+pub fn app_data() -> String {
+    let result: String;
 
-    if !output_directory.exists() {
-        let _ = create_dir_all(output_directory);
+    unsafe {
+        result = SHGetKnownFolderPath(
+            &FOLDERID_LocalAppData,
+            KNOWN_FOLDER_FLAG::default(),
+            HANDLE::default(),
+        )
+        .unwrap()
+        .to_string()
+        .unwrap();
+    };
+
+    result
+}
+
+fn main() {
+    let cache: PathBuf = [win::app_data().as_str(), "crane", "packages"]
+        .iter()
+        .collect();
+
+    if !cache.exists() {
+        let _ = create_dir_all(&cache);
     }
 
     let path = PathBuf::from("crane.json");
     let file = File::open(&path);
+
+    // let file = File::open(&PathBuf::from("crane.json"));
 
     match file {
         Ok(_) => {
@@ -59,14 +60,14 @@ fn main() {
                         let branch = split[1].split("@").nth(1).unwrap();
                         println!("{} - {}", repo, branch);
 
-                        let output_directory: PathBuf = ["crane_packages", repo].iter().collect();
+                        // let output_directory: PathBuf = ["crane_packages", repo].iter().collect();
 
-                        if !output_directory.exists() {
-                            let _ = create_dir_all(&output_directory);
-                        }
+                        // if !output_directory.exists() {
+                        //     let _ = create_dir_all(&output_directory);
+                        // }
 
                         let output = Command::new("gh")
-                            .current_dir(&output_directory)
+                            .current_dir(&cache)
                             .args(["repo", "clone", repo, "--", "--branch", branch, "--depth=1"])
                             .output()
                             .unwrap();
@@ -79,7 +80,7 @@ fn main() {
                         println!("{} - {}", package, version);
 
                         let output = Command::new("nuget")
-                            .current_dir("crane_packages")
+                            .current_dir(&cache)
                             .args(["install", package, "-Version", version])
                             .output()
                             .unwrap();
