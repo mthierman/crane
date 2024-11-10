@@ -35,9 +35,9 @@ fn compile_resource(path: PathBuf) {
     }
 }
 
-// fn linker_options(flags: &str) {
-//     println!("cargo::rustc-link-arg-bins={}", flags);
-// }
+fn linker_options(flags: &str) {
+    println!("cargo::rustc-link-arg-bins={}", flags);
+}
 
 fn main() {
     let root = env::current_dir()
@@ -52,5 +52,5 @@ fn main() {
     let rc: PathBuf = [root.as_str(), "data", "app.rc"].iter().collect();
     compile_resource(rc);
 
-    // linker_optins("/WX");
+    linker_options("/WX");
 }
