@@ -38,7 +38,8 @@ fn main() {
         create_dir_all(&package_cache).unwrap();
     }
 
-    let manifest_file = File::open(&PathBuf::from("crane.json"));
+    let manifest_file_path = PathBuf::from("crane.json");
+    let manifest_file = File::open(&manifest_file_path);
 
     match manifest_file {
         Ok(_) => {
@@ -51,18 +52,12 @@ fn main() {
 
                 match split[0] {
                     "gh" => {
-                        let repo = split[1].split("@").next().unwrap();
-                        let branch = split[1].split("@").nth(1).unwrap();
-                        println!("{} - {}", repo, branch);
-
-                        // let output_directory: PathBuf = ["crane_packages", repo].iter().collect();
-
-                        // if !output_directory.exists() {
-                        //     let _ = create_dir_all(&output_directory);
-                        // }
+                        // let repo = split[1].split("@").next().unwrap();
+                        // let branch = split[1].split("@").nth(1).unwrap();
+                        // println!("{} - {}", repo, branch);
 
                         let output = Command::new("gh")
-                            .current_dir(&cache)
+                            .current_dir(&package_cache)
                             .args(["repo", "clone", repo, "--", "--branch", branch, "--depth=1"])
                             .output()
                             .unwrap();
@@ -70,12 +65,12 @@ fn main() {
                         println!("{}", printout);
                     }
                     "nuget" => {
-                        let package = split[1].split("@").next().unwrap();
-                        let version = split[1].split("@").nth(1).unwrap();
-                        println!("{} - {}", package, version);
+                        // let package = split[1].split("@").next().unwrap();
+                        // let version = split[1].split("@").nth(1).unwrap();
+                        // println!("{} - {}", package, version);
 
                         let output = Command::new("nuget")
-                            .current_dir(&cache)
+                            .current_dir(&package_cache)
                             .args(["install", package, "-Version", version])
                             .output()
                             .unwrap();
@@ -89,8 +84,8 @@ fn main() {
             }
         }
         Err(_) => {
-            println!("crane.json doesn't exist...");
-            let _ = File::create(&path);
+            println!("Manifest doesn't exist, creating...");
+            let _ = File::create(&manifest_file_path);
         }
     }
 }
