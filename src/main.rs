@@ -71,8 +71,6 @@ fn main() {
         create_dir_all(&crane.cache).unwrap();
     }
 
-    // let manifest_file = File::open(&crane.manifest);
-
     match crane.reader.get_ref().metadata() {
         Ok(_) => {
             let u = serde_json::from_reader::<_, Manifest>(crane.reader).unwrap();
