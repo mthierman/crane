@@ -99,6 +99,14 @@ impl Nuget {
             ),
         }
     }
+
+    fn download<P: AsRef<Path>>(&self, out_dir: &P) {
+        Command::new("nuget")
+            .current_dir(&out_dir)
+            .args(["install", &self.name, "-Version", &self.version])
+            .output()
+            .unwrap();
+    }
 }
 
 #[derive(Debug)]
@@ -204,11 +212,7 @@ fn main() {
                             create_dir_all(&out_dir).unwrap();
                         }
 
-                        Command::new("nuget")
-                            .current_dir(&out_dir)
-                            .args(["install", &nuget.name, "-Version", &nuget.version])
-                            .output()
-                            .unwrap();
+                        nuget.download(&out_dir);
 
                         let id = format!("{}.{}", &nuget.name, &nuget.version);
                         out_dir.push(&id);
