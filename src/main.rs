@@ -27,20 +27,26 @@ struct Nuget {
 }
 
 struct Crane {
-    cache: PathBuf,
+    root: PathBuf,
+    packages: PathBuf,
     manifest: PathBuf,
     reader: BufReader<File>,
+    links: PathBuf,
 }
 
 impl Crane {
     fn new() -> Self {
         let manifest = PathBuf::from("crane.json");
         let manifest_file = File::open(&manifest).unwrap();
+        let mut links = std::env::current_dir().unwrap();
+        links.push("crane_packages");
 
         Self {
-            cache: Crane::cache(),
+            root: Crane::root(),
+            packages: Crane::cache(),
             manifest: manifest,
             reader: BufReader::new(manifest_file),
+            links: links,
         }
     }
 
@@ -57,18 +63,24 @@ impl Crane {
         }
     }
 
+    fn root() -> PathBuf {
+        [Crane::app_data().as_str(), "crane"].iter().collect()
+    }
+
     fn cache() -> PathBuf {
-        [Crane::app_data().as_str(), "crane", "packages"]
-            .iter()
-            .collect()
+        Crane::root().join("packages")
     }
 }
 
 fn main() {
     let crane = Crane::new();
 
-    if !crane.cache.exists() {
-        create_dir_all(&crane.cache).unwrap();
+    if !crane.packages.exists() {
+        create_dir_all(&crane.packages).unwrap();
+    }
+
+    if !crane.links.exists() {
+        create_dir_all(&crane.links).unwrap();
     }
 
     match crane.reader.get_ref().metadata() {
@@ -111,7 +123,7 @@ fn main() {
                             .unwrap();
                         println!("{}", &branch);
 
-                        let mut out_dir = crane.cache.clone();
+                        let mut out_dir = crane.packages.clone();
                         out_dir.push("gh");
                         out_dir.push(owner);
                         println!("{}", out_dir.display());
@@ -135,18 +147,14 @@ fn main() {
                             .output()
                             .unwrap();
 
-                        // current_dir.push(repo);
-                        // current_dir.push(branch);
+                        out_dir.push(repo);
+                        out_dir.push(branch);
+                        println!("{}", out_dir.display());
 
-                        // println!("{}", current_dir.display());
-                        // let mut link = std::env::current_dir().unwrap();
-                        // link.push("crane_packages");
-                        // if !link.exists() {
-                        //     create_dir_all(&link).unwrap();
-                        // }
-                        // link.push(repo);
+                        let mut link = crane.links.clone();
+                        link.push(repo);
 
-                        // symlink_dir(current_dir, link).unwrap();
+                        symlink_dir(&out_dir, link).unwrap();
                     }
                     "nuget" => {
                         // let package = split[1].split("@").next().unwrap();
