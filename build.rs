@@ -43,7 +43,7 @@ fn main() {
 
     let root = env::current_dir().unwrap();
 
-    let rc = root.join("path").join("app.rc");
+    let rc = root.join("data").join("app.rc");
     compile_resource(rc);
 
     let manifest = root.join("data").join("app.manifest");
