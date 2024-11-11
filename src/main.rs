@@ -158,9 +158,13 @@ fn main() {
                         let mut link = crane.links.clone();
                         link.push(repo);
 
-                        symlink_dir(&out_dir, link).unwrap();
+                        if !link.exists() {
+                            symlink_dir(&out_dir, link).unwrap();
+                        }
                     }
                     "nuget" => {
+                        let package = package.split("@").next().unwrap();
+                        println!("{}", package);
                         // let package = split[1].split("@").next().unwrap();
                         // let version = split[1].split("@").nth(1).unwrap();
                         // println!("Installing {}@{}...", package, version);
