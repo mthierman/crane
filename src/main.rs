@@ -11,11 +11,48 @@ struct Manifest {
     packages: Vec<String>,
 }
 
-// struct GitHub {
-//     owner: String,
-//     repo: String,
-//     branch: String,
-// }
+struct GitHub {
+    owner: String,
+    repo: String,
+    branch: String,
+}
+
+impl GitHub {
+    fn new(package: &str) -> Self {
+        Self {
+            owner: String::from(
+                package
+                    .split(":")
+                    .nth(1)
+                    .unwrap()
+                    .split("/")
+                    .nth(0)
+                    .unwrap(),
+            ),
+            repo: String::from(
+                package
+                    .split(":")
+                    .nth(1)
+                    .unwrap()
+                    .split("@")
+                    .nth(0)
+                    .unwrap()
+                    .split("/")
+                    .nth(1)
+                    .unwrap(),
+            ),
+            branch: String::from(
+                package
+                    .split(":")
+                    .nth(1)
+                    .unwrap()
+                    .split("@")
+                    .nth(1)
+                    .unwrap(),
+            ),
+        }
+    }
+}
 
 // struct Nuget {
 //     package: String,
@@ -93,36 +130,11 @@ fn main() {
 
                 match provider {
                     "gh" => {
-                        let owner = package
-                            .split(":")
-                            .nth(1)
-                            .unwrap()
-                            .split("/")
-                            .nth(0)
-                            .unwrap();
-
-                        let repo = package
-                            .split(":")
-                            .nth(1)
-                            .unwrap()
-                            .split("@")
-                            .nth(0)
-                            .unwrap()
-                            .split("/")
-                            .nth(1)
-                            .unwrap();
-
-                        let branch = package
-                            .split(":")
-                            .nth(1)
-                            .unwrap()
-                            .split("@")
-                            .nth(1)
-                            .unwrap();
+                        let gh = GitHub::new(package);
 
                         let mut out_dir = crane.packages.clone();
                         out_dir.push("gh");
-                        out_dir.push(owner);
+                        out_dir.push(&gh.owner);
 
                         if !out_dir.exists() {
                             create_dir_all(&out_dir).unwrap();
@@ -133,24 +145,24 @@ fn main() {
                             .args([
                                 "repo",
                                 "clone",
-                                String::from(owner.to_owned() + "/" + repo).as_str(),
-                                String::from(repo.to_owned() + "/" + branch).as_str(),
+                                format!("{}/{}", &gh.owner, &gh.repo).as_str(),
+                                format!("{}/{}", &gh.repo, &gh.branch).as_str(),
                                 "--",
                                 "--branch",
-                                &branch,
+                                &gh.branch,
                                 "--depth=1",
                             ])
                             .output()
                             .unwrap();
 
-                        out_dir.push(repo);
-                        out_dir.push(branch);
+                        out_dir.push(&gh.repo);
+                        out_dir.push(&gh.branch);
 
                         let mut link = crane.links.clone();
-                        link.push(repo);
+                        link.push(&gh.repo);
 
                         if !link.exists() {
-                            symlink_dir(&out_dir, link).unwrap();
+                            symlink_dir(&out_dir, &link).unwrap();
                         }
                     }
                     "nuget" => {
