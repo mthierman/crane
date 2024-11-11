@@ -160,16 +160,18 @@ impl HTTP {
     }
 
     fn download<P: AsRef<Path>>(&self, out_file: &P) {
-        unsafe {
-            URLDownloadToFileW(
-                None,
-                &HSTRING::from(&self.url.to_string()),
-                &HSTRING::from(out_file.as_ref().to_str().unwrap()),
-                0,
-                None,
-            )
-            .unwrap();
-        }
+        println!("{}", &self.url.to_string());
+        println!("{}", &out_file.as_ref().to_str().unwrap());
+        // unsafe {
+        //     URLDownloadToFileW(
+        //         None,
+        //         &HSTRING::from(&self.url.to_string()),
+        //         &HSTRING::from(out_file.as_ref().to_str().unwrap()),
+        //         0,
+        //         None,
+        //     )
+        //     .expect("URLDownloadToFileW");
+        // }
     }
 }
 
@@ -217,6 +219,22 @@ fn main() {
 
             for package in manifest.packages.iter() {
                 match package.split(":").nth(0) {
+                    Some("http") | Some("https") => {
+                        let http = HTTP::new(package);
+
+                        let mut out_dir = crane.packages.clone();
+                        out_dir.push("http");
+
+                        if !out_dir.exists() {
+                            create_dir_all(&out_dir).unwrap();
+                        }
+
+                        let segments = http.url.path_segments().unwrap().last().unwrap();
+                        println!("{}", segments);
+
+                        // out_dir.push("test.zip");
+                        // http.download(&out_dir);
+                    }
                     Some("gh") => {
                         let gh = GitHub::new(package);
 
