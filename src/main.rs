@@ -73,9 +73,9 @@ fn main() {
 
     match crane.reader.get_ref().metadata() {
         Ok(_) => {
-            let u = serde_json::from_reader::<_, Manifest>(crane.reader).unwrap();
+            let manifest = serde_json::from_reader::<_, Manifest>(crane.reader).unwrap();
 
-            for package in u.packages.iter() {
+            for package in manifest.packages.iter() {
                 let split: Vec<&str> = package.split(":").collect();
                 let provider = split[0];
 
