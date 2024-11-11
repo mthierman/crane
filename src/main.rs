@@ -6,6 +6,19 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use windows::{Win32::Foundation::HANDLE, Win32::UI::Shell::*};
 
+fn app_data() -> String {
+    unsafe {
+        SHGetKnownFolderPath(
+            &FOLDERID_LocalAppData,
+            KNOWN_FOLDER_FLAG::default(),
+            HANDLE::default(),
+        )
+        .unwrap()
+        .to_string()
+        .unwrap()
+    }
+}
+
 #[derive(Deserialize, Debug)]
 struct Manifest {
     packages: Vec<String>,
@@ -120,39 +133,18 @@ struct Crane {
 
 impl Crane {
     fn new() -> Self {
+        let root = PathBuf::from(app_data()).join("crane");
+        let packages = root.clone().join("packages");
         let manifest = PathBuf::from("crane.json");
         let manifest_file = File::open(&manifest).unwrap();
-        let mut links = std::env::current_dir().unwrap();
-        links.push("crane_packages");
 
         Self {
-            root: Crane::root(),
-            packages: Crane::cache(),
+            root: root,
+            packages: packages,
             manifest: manifest,
             reader: BufReader::new(manifest_file),
-            links: links,
+            links: std::env::current_dir().unwrap().join("crane_packages"),
         }
-    }
-
-    fn app_data() -> String {
-        unsafe {
-            SHGetKnownFolderPath(
-                &FOLDERID_LocalAppData,
-                KNOWN_FOLDER_FLAG::default(),
-                HANDLE::default(),
-            )
-            .unwrap()
-            .to_string()
-            .unwrap()
-        }
-    }
-
-    fn root() -> PathBuf {
-        [Crane::app_data().as_str(), "crane"].iter().collect()
-    }
-
-    fn cache() -> PathBuf {
-        Crane::root().join("packages")
     }
 }
 
