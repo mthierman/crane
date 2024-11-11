@@ -2,7 +2,7 @@ use serde::Deserialize;
 use std::fs::*;
 use std::io::BufReader;
 use std::os::windows::fs::symlink_dir;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use windows::{Win32::Foundation::HANDLE, Win32::UI::Shell::*};
 
@@ -51,6 +51,23 @@ impl GitHub {
                     .unwrap(),
             ),
         }
+    }
+
+    fn download<P: AsRef<Path>>(&self, out_dir: &P) {
+        Command::new("gh")
+            .current_dir(&out_dir)
+            .args([
+                "repo",
+                "clone",
+                format!("{}/{}", &self.owner, &self.repo).as_str(),
+                format!("{}/{}", &self.repo, &self.branch).as_str(),
+                "--",
+                "--branch",
+                &self.branch,
+                "--depth=1",
+            ])
+            .output()
+            .unwrap();
     }
 }
 
@@ -165,20 +182,7 @@ fn main() {
                             create_dir_all(&out_dir).unwrap();
                         }
 
-                        Command::new("gh")
-                            .current_dir(&out_dir)
-                            .args([
-                                "repo",
-                                "clone",
-                                format!("{}/{}", &gh.owner, &gh.repo).as_str(),
-                                format!("{}/{}", &gh.repo, &gh.branch).as_str(),
-                                "--",
-                                "--branch",
-                                &gh.branch,
-                                "--depth=1",
-                            ])
-                            .output()
-                            .unwrap();
+                        gh.download(&out_dir);
 
                         out_dir.push(&gh.repo);
                         out_dir.push(&gh.branch);
