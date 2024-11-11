@@ -67,7 +67,7 @@ impl GitHub {
     }
 
     fn download<P: AsRef<Path>>(&self, out_dir: &P) {
-        Command::new("gh")
+        let output = Command::new("gh")
             .current_dir(&out_dir)
             .args([
                 "repo",
@@ -82,14 +82,18 @@ impl GitHub {
             ])
             .output()
             .unwrap();
+        let stdout = String::from_utf8(output.stdout).unwrap();
+        println!("{}", stdout);
     }
 
     fn update<P: AsRef<Path>>(&self, out_dir: &P) {
-        Command::new("git")
+        let output = Command::new("git")
             .current_dir(&out_dir)
             .args(["pull", "--recurse-submodules"])
             .output()
             .unwrap();
+        let stdout = String::from_utf8(output.stdout).unwrap();
+        println!("{}", stdout);
     }
 }
 
@@ -184,21 +188,20 @@ fn main() {
 
                         if !out_dir.exists() {
                             create_dir_all(&out_dir).unwrap();
-
                             gh.download(&out_dir);
-
-                            out_dir.push(&gh.repo);
-                            out_dir.push(&gh.branch);
-
-                            let mut link = crane.links.clone();
-                            link.push(&gh.repo);
-
-                            if !link.exists() {
-                                symlink_dir(&out_dir, &link).unwrap();
-                            }
-                        } else {
-                            gh.update(&out_dir);
                         }
+
+                        out_dir.push(&gh.repo);
+                        out_dir.push(&gh.branch);
+
+                        let mut link = crane.links.clone();
+                        link.push(&gh.repo);
+
+                        if !link.exists() {
+                            symlink_dir(&out_dir, &link).unwrap();
+                        }
+
+                        gh.update(&out_dir);
                     }
                     Some("nuget") => {
                         let nuget = Nuget::new(package);
