@@ -15,38 +15,67 @@ struct Manifest {
     packages: Vec<String>,
 }
 
-fn app_data() -> String {
-    unsafe {
-        SHGetKnownFolderPath(
-            &FOLDERID_LocalAppData,
-            KNOWN_FOLDER_FLAG::default(),
-            HANDLE::default(),
-        )
-        .unwrap()
-        .to_string()
-        .unwrap()
-    }
+struct GitHub {
+    owner: String,
+    repo: String,
+    branch: String,
 }
 
-fn package_cache() -> PathBuf {
-    [app_data().as_str(), "crane", "packages"].iter().collect()
+struct Nuget {
+    package: String,
+    version: String,
+}
+
+struct Crane {
+    cache: PathBuf,
+    manifest: PathBuf,
+    reader: BufReader<File>,
+}
+
+impl Crane {
+    fn new() -> Self {
+        let manifest = PathBuf::from("crane.json");
+        let manifest_file = File::open(&manifest).unwrap();
+
+        Self {
+            cache: Crane::cache(),
+            manifest: manifest,
+            reader: BufReader::new(manifest_file),
+        }
+    }
+
+    fn app_data() -> String {
+        unsafe {
+            SHGetKnownFolderPath(
+                &FOLDERID_LocalAppData,
+                KNOWN_FOLDER_FLAG::default(),
+                HANDLE::default(),
+            )
+            .unwrap()
+            .to_string()
+            .unwrap()
+        }
+    }
+
+    fn cache() -> PathBuf {
+        [Crane::app_data().as_str(), "crane", "packages"]
+            .iter()
+            .collect()
+    }
 }
 
 fn main() {
-    let package_cache = package_cache();
+    let crane = Crane::new();
 
-    if !package_cache.exists() {
-        create_dir_all(&package_cache).unwrap();
+    if !crane.cache.exists() {
+        create_dir_all(&crane.cache).unwrap();
     }
 
-    let manifest_file_path = PathBuf::from("crane.json");
-    let manifest_file = File::open(&manifest_file_path);
+    // let manifest_file = File::open(&crane.manifest);
 
-    match manifest_file {
+    match crane.reader.get_ref().metadata() {
         Ok(_) => {
-            let reader = BufReader::new(manifest_file.unwrap());
-
-            let u = serde_json::from_reader::<_, Manifest>(reader).unwrap();
+            let u = serde_json::from_reader::<_, Manifest>(crane.reader).unwrap();
 
             for package in u.packages.iter() {
                 let split: Vec<&str> = package.split(":").collect();
@@ -61,7 +90,7 @@ fn main() {
                         let repo = split[0];
                         let branch = split[1];
 
-                        let mut current_dir = package_cache.clone();
+                        let mut current_dir = crane.cache.clone();
                         current_dir.push(owner);
 
                         if !current_dir.exists() {
@@ -123,7 +152,7 @@ fn main() {
         }
         Err(_) => {
             println!("Manifest doesn't exist, creating...");
-            let _ = File::create(&manifest_file_path);
+            let _ = File::create(&crane.manifest);
         }
     }
 }
