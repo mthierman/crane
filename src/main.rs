@@ -4,8 +4,8 @@ use std::io::BufReader;
 use std::os::windows::fs::symlink_dir;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use url::{ParseError, Url};
-use windows::core::{HSTRING, PCWSTR};
+use url::Url;
+use windows::core::HSTRING;
 use windows::Win32::{Foundation::HANDLE, System::Com::Urlmon::URLDownloadToFileW, UI::Shell::*};
 
 fn app_data() -> String {
@@ -160,18 +160,16 @@ impl HTTP {
     }
 
     fn download<P: AsRef<Path>>(&self, out_file: &P) {
-        println!("{}", &self.url.to_string());
-        println!("{}", &out_file.as_ref().to_str().unwrap());
-        // unsafe {
-        //     URLDownloadToFileW(
-        //         None,
-        //         &HSTRING::from(&self.url.to_string()),
-        //         &HSTRING::from(out_file.as_ref().to_str().unwrap()),
-        //         0,
-        //         None,
-        //     )
-        //     .expect("URLDownloadToFileW");
-        // }
+        unsafe {
+            URLDownloadToFileW(
+                None,
+                &HSTRING::from(&self.url.to_string()),
+                &HSTRING::from(out_file.as_ref().to_str().unwrap()),
+                0,
+                None,
+            )
+            .expect("URLDownloadToFileW");
+        }
     }
 }
 
@@ -229,11 +227,8 @@ fn main() {
                             create_dir_all(&out_dir).unwrap();
                         }
 
-                        let segments = http.url.path_segments().unwrap().last().unwrap();
-                        println!("{}", segments);
-
-                        // out_dir.push("test.zip");
-                        // http.download(&out_dir);
+                        out_dir.push(http.url.path_segments().unwrap().last().unwrap());
+                        http.download(&out_dir);
                     }
                     Some("gh") => {
                         let gh = GitHub::new(package);
