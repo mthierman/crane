@@ -2,22 +2,23 @@ use std::env;
 use std::path::*;
 use std::process::*;
 
-fn compile_resource(path: PathBuf) {
+fn compile_resource(rc_file: PathBuf) {
     if Command::new("rc").status().is_ok() {
-        if !path.exists() {
-            println!("cargo:warning={} not found", path.display());
+        if !rc_file.exists() {
+            println!("cargo:warning={} not found", rc_file.display());
         } else {
-            let res_file = path.file_stem().unwrap().to_str().unwrap().to_owned() + ".res";
-            let res: PathBuf = [root().as_str(), "target", res_file.as_str()]
-                .iter()
-                .collect();
+            let root = env::current_dir().unwrap();
+            let res_file = root.join("target").join(format!(
+                "{}.res",
+                rc_file.file_stem().unwrap().to_str().unwrap()
+            ));
 
             Command::new("rc")
-                .args(["/fo", res.to_str().unwrap(), path.to_str().unwrap()])
+                .args(["/fo", res_file.to_str().unwrap(), rc_file.to_str().unwrap()])
                 .status()
                 .unwrap();
 
-            println!("cargo::rustc-link-arg-bins={}", res.to_str().unwrap());
+            println!("cargo::rustc-link-arg-bins={}", res_file.to_str().unwrap());
         }
     } else {
         println!("cargo:warning=rc.exe not found");
