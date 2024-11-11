@@ -4,7 +4,9 @@ use std::io::BufReader;
 use std::os::windows::fs::symlink_dir;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use windows::{Win32::Foundation::HANDLE, Win32::UI::Shell::*};
+use url::{ParseError, Url};
+use windows::core::{HSTRING, PCWSTR};
+use windows::Win32::{Foundation::HANDLE, System::Com::Urlmon::URLDownloadToFileW, UI::Shell::*};
 
 fn app_data() -> String {
     unsafe {
@@ -143,6 +145,31 @@ impl Nuget {
             .args(["install", &self.name, "-Version", &self.version])
             .output()
             .unwrap();
+    }
+}
+
+struct HTTP {
+    url: Url,
+}
+
+impl HTTP {
+    fn new(package: &str) -> Self {
+        Self {
+            url: Url::parse(package).unwrap(),
+        }
+    }
+
+    fn download<P: AsRef<Path>>(&self, out_file: &P) {
+        unsafe {
+            URLDownloadToFileW(
+                None,
+                &HSTRING::from(&self.url.to_string()),
+                &HSTRING::from(out_file.as_ref().to_str().unwrap()),
+                0,
+                None,
+            )
+            .unwrap();
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 {
     "packages": [
         "gh:nlohmann/json@develop",
-        "nuget:Microsoft.Web.WebView2@1.0.2849.39"
+        "nuget:Microsoft.Web.WebView2@1.0.2849.39",
+        "https://github.com/nlohmann/json/releases/download/v3.11.3/include.zip"
     ]
 }
