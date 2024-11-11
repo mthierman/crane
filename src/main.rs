@@ -1,7 +1,3 @@
-#![allow(unused_imports)]
-#![allow(unused_variables)]
-#![allow(dead_code)]
-
 use serde::Deserialize;
 use std::fs::*;
 use std::io::BufReader;
@@ -15,17 +11,18 @@ struct Manifest {
     packages: Vec<String>,
 }
 
-struct GitHub {
-    owner: String,
-    repo: String,
-    branch: String,
-}
+// struct GitHub {
+//     owner: String,
+//     repo: String,
+//     branch: String,
+// }
 
-struct Nuget {
-    package: String,
-    version: String,
-}
+// struct Nuget {
+//     package: String,
+//     version: String,
+// }
 
+#[derive(Debug)]
 struct Crane {
     root: PathBuf,
     packages: PathBuf,
