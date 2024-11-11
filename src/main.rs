@@ -66,17 +66,31 @@ impl GitHub {
         }
     }
 
+    // fn download<P: AsRef<Path>>(&self, out_dir: &P) {
+    //     Command::new("gh")
+    //         .current_dir(&out_dir)
+    //         .args([
+    //             "repo",
+    //             "clone",
+    //             format!("{}/{}", &self.owner, &self.repo).as_str(),
+    //             format!("{}/{}", &self.repo, &self.branch).as_str(),
+    //             "--",
+    //             "--branch",
+    //             &self.branch,
+    //             "--depth=1",
+    //             "--recurse-submodules",
+    //         ])
+    //         .output()
+    //         .unwrap();
+    // }
+
     fn download<P: AsRef<Path>>(&self, out_dir: &P) {
-        Command::new("gh")
+        Command::new("git")
             .current_dir(&out_dir)
             .args([
-                "repo",
                 "clone",
-                format!("{}/{}", &self.owner, &self.repo).as_str(),
+                format!("https://github.com/{}/{}.git", &self.owner, &self.repo).as_str(),
                 format!("{}/{}", &self.repo, &self.branch).as_str(),
-                "--",
-                "--branch",
-                &self.branch,
                 "--depth=1",
                 "--recurse-submodules",
             ])
