@@ -142,10 +142,6 @@ impl Crane {
             links: std::env::current_dir().unwrap().join("crane_packages"),
         }
     }
-
-    fn reader(file: File) -> BufReader<File> {
-        BufReader::new(file)
-    }
 }
 
 fn main() {
