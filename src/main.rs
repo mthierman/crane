@@ -66,6 +66,7 @@ impl GitHub {
         }
     }
 
+    #[allow(dead_code)]
     fn download_gh_cli<P: AsRef<Path>>(&self, out_dir: &P) {
         Command::new("gh")
             .current_dir(&out_dir)
