@@ -78,6 +78,7 @@ impl GitHub {
                 "--branch",
                 &self.branch,
                 "--depth=1",
+                "--recurse-submodules"
             ])
             .output()
             .unwrap();
