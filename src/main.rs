@@ -165,9 +165,7 @@ fn main() {
             let manifest = serde_json::from_reader::<_, Manifest>(reader).unwrap();
 
             for package in manifest.packages.iter() {
-                let provider = package.split(":").nth(0).unwrap();
-
-                match provider {
+                match package.split(":").nth(0).unwrap() {
                     "gh" => {
                         let gh = GitHub::new(package);
 
