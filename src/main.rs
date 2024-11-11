@@ -67,7 +67,7 @@ impl GitHub {
     }
 
     fn download<P: AsRef<Path>>(&self, out_dir: &P) {
-        let output = Command::new("gh")
+        Command::new("gh")
             .current_dir(&out_dir)
             .args([
                 "repo",
@@ -82,18 +82,14 @@ impl GitHub {
             ])
             .output()
             .unwrap();
-        let stdout = String::from_utf8(output.stdout).unwrap();
-        println!("{}", stdout);
     }
 
     fn update<P: AsRef<Path>>(&self, out_dir: &P) {
-        let output = Command::new("git")
+        Command::new("git")
             .current_dir(&out_dir)
-            .args(["pull", "--recurse-submodules"])
+            .args(["pull", "--depth=1", "--recurse-submodules"])
             .output()
             .unwrap();
-        let stdout = String::from_utf8(output.stdout).unwrap();
-        println!("{}", stdout);
     }
 }
 
