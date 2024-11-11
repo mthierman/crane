@@ -93,87 +93,98 @@ fn main() {
 
             for package in manifest.packages.iter() {
                 let provider = package.split(":").nth(0).unwrap();
-                println!("{}", provider);
 
                 match provider {
                     "gh" => {
-                        let owner = package
-                            .split(":")
-                            .nth(1)
-                            .unwrap()
-                            .split("/")
-                            .nth(0)
-                            .unwrap();
-                        println!("{}", &owner);
+                        // let owner = package
+                        //     .split(":")
+                        //     .nth(1)
+                        //     .unwrap()
+                        //     .split("/")
+                        //     .nth(0)
+                        //     .unwrap();
+                        // println!("{}", &owner);
 
-                        let repo = package
-                            .split(":")
-                            .nth(1)
-                            .unwrap()
-                            .split("@")
-                            .nth(0)
-                            .unwrap()
-                            .split("/")
-                            .nth(1)
-                            .unwrap();
-                        println!("{}", &repo);
+                        // let repo = package
+                        //     .split(":")
+                        //     .nth(1)
+                        //     .unwrap()
+                        //     .split("@")
+                        //     .nth(0)
+                        //     .unwrap()
+                        //     .split("/")
+                        //     .nth(1)
+                        //     .unwrap();
+                        // println!("{}", &repo);
 
-                        let branch = package
-                            .split(":")
-                            .nth(1)
-                            .unwrap()
-                            .split("@")
-                            .nth(1)
-                            .unwrap();
-                        println!("{}", &branch);
+                        // let branch = package
+                        //     .split(":")
+                        //     .nth(1)
+                        //     .unwrap()
+                        //     .split("@")
+                        //     .nth(1)
+                        //     .unwrap();
+                        // println!("{}", &branch);
 
-                        let mut out_dir = crane.packages.clone();
-                        out_dir.push("gh");
-                        out_dir.push(owner);
-                        println!("{}", out_dir.display());
+                        // let mut out_dir = crane.packages.clone();
+                        // out_dir.push("gh");
+                        // out_dir.push(owner);
+                        // println!("{}", out_dir.display());
 
-                        if !out_dir.exists() {
-                            create_dir_all(&out_dir).unwrap();
-                        }
+                        // if !out_dir.exists() {
+                        //     create_dir_all(&out_dir).unwrap();
+                        // }
 
-                        Command::new("gh")
-                            .current_dir(&out_dir)
-                            .args([
-                                "repo",
-                                "clone",
-                                String::from(owner.to_owned() + "/" + repo).as_str(),
-                                String::from(repo.to_owned() + "/" + branch).as_str(),
-                                "--",
-                                "--branch",
-                                &branch,
-                                "--depth=1",
-                            ])
-                            .output()
-                            .unwrap();
-
-                        out_dir.push(repo);
-                        out_dir.push(branch);
-                        println!("{}", out_dir.display());
-
-                        let mut link = crane.links.clone();
-                        link.push(repo);
-
-                        if !link.exists() {
-                            symlink_dir(&out_dir, link).unwrap();
-                        }
-                    }
-                    "nuget" => {
-                        let package = package.split("@").next().unwrap();
-                        println!("{}", package);
-                        // let package = split[1].split("@").next().unwrap();
-                        // let version = split[1].split("@").nth(1).unwrap();
-                        // println!("Installing {}@{}...", package, version);
-
-                        // Command::new("nuget")
-                        //     .current_dir(&package_cache)
-                        //     .args(["install", package, "-Version", version])
+                        // Command::new("gh")
+                        //     .current_dir(&out_dir)
+                        //     .args([
+                        //         "repo",
+                        //         "clone",
+                        //         String::from(owner.to_owned() + "/" + repo).as_str(),
+                        //         String::from(repo.to_owned() + "/" + branch).as_str(),
+                        //         "--",
+                        //         "--branch",
+                        //         &branch,
+                        //         "--depth=1",
+                        //     ])
                         //     .output()
                         //     .unwrap();
+
+                        // out_dir.push(repo);
+                        // out_dir.push(branch);
+                        // println!("{}", out_dir.display());
+
+                        // let mut link = crane.links.clone();
+                        // link.push(repo);
+
+                        // if !link.exists() {
+                        //     symlink_dir(&out_dir, link).unwrap();
+                        // }
+                    }
+                    "nuget" => {
+                        let package_name = package
+                            .split(":")
+                            .nth(1)
+                            .unwrap()
+                            .split("@")
+                            .nth(0)
+                            .unwrap();
+                        println!("{}", &package_name);
+
+                        let version = package
+                            .split(":")
+                            .nth(1)
+                            .unwrap()
+                            .split("@")
+                            .nth(1)
+                            .unwrap();
+                        println!("{}", &version);
+
+                        Command::new("nuget")
+                            .current_dir(&crane.packages)
+                            .args(["install", &package_name, "-Version", &version])
+                            .output()
+                            .unwrap();
                     }
                     _ => {
                         println!("ERROR!")
