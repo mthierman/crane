@@ -78,8 +78,16 @@ impl GitHub {
                 "--branch",
                 &self.branch,
                 "--depth=1",
-                "--recurse-submodules"
+                "--recurse-submodules",
             ])
+            .output()
+            .unwrap();
+    }
+
+    fn update<P: AsRef<Path>>(&self, out_dir: &P) {
+        Command::new("git")
+            .current_dir(&out_dir)
+            .args(["pull", "--recurse-submodules"])
             .output()
             .unwrap();
     }
@@ -176,18 +184,20 @@ fn main() {
 
                         if !out_dir.exists() {
                             create_dir_all(&out_dir).unwrap();
-                        }
 
-                        gh.download(&out_dir);
+                            gh.download(&out_dir);
 
-                        out_dir.push(&gh.repo);
-                        out_dir.push(&gh.branch);
+                            out_dir.push(&gh.repo);
+                            out_dir.push(&gh.branch);
 
-                        let mut link = crane.links.clone();
-                        link.push(&gh.repo);
+                            let mut link = crane.links.clone();
+                            link.push(&gh.repo);
 
-                        if !link.exists() {
-                            symlink_dir(&out_dir, &link).unwrap();
+                            if !link.exists() {
+                                symlink_dir(&out_dir, &link).unwrap();
+                            }
+                        } else {
+                            gh.update(&out_dir);
                         }
                     }
                     Some("nuget") => {
