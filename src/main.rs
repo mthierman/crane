@@ -169,7 +169,6 @@ fn main() {
                             .split("@")
                             .nth(0)
                             .unwrap();
-                        println!("{}", &package_name);
 
                         let version = package
                             .split(":")
@@ -178,10 +177,17 @@ fn main() {
                             .split("@")
                             .nth(1)
                             .unwrap();
-                        println!("{}", &version);
+
+                        let mut out_dir = crane.packages.clone();
+                        out_dir.push("nuget");
+                        println!("{}", out_dir.display());
+
+                        if !out_dir.exists() {
+                            create_dir_all(&out_dir).unwrap();
+                        }
 
                         Command::new("nuget")
-                            .current_dir(&crane.packages)
+                            .current_dir(&out_dir)
                             .args(["install", &package_name, "-Version", &version])
                             .output()
                             .unwrap();
