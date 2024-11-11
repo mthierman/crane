@@ -2,16 +2,6 @@ use std::env;
 use std::path::*;
 use std::process::*;
 
-fn root() -> String {
-    let root = env::current_dir()
-        .unwrap()
-        .into_os_string()
-        .into_string()
-        .unwrap();
-
-    root
-}
-
 fn compile_resource(path: PathBuf) {
     if Command::new("rc").status().is_ok() {
         if !path.exists() {
