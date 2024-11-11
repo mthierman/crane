@@ -165,8 +165,8 @@ fn main() {
             let manifest = serde_json::from_reader::<_, Manifest>(reader).unwrap();
 
             for package in manifest.packages.iter() {
-                match package.split(":").nth(0).unwrap() {
-                    "gh" => {
+                match package.split(":").nth(0) {
+                    Some("gh") => {
                         let gh = GitHub::new(package);
 
                         let mut out_dir = crane.packages.clone();
@@ -189,7 +189,7 @@ fn main() {
                             symlink_dir(&out_dir, &link).unwrap();
                         }
                     }
-                    "nuget" => {
+                    Some("nuget") => {
                         let nuget = Nuget::new(package);
 
                         let mut out_dir = crane.packages.clone();
@@ -211,9 +211,10 @@ fn main() {
                             symlink_dir(&out_dir, &link).unwrap();
                         }
                     }
-                    _ => {
-                        println!("ERROR!")
+                    Some(e) => {
+                        println!("Incorrect provider detected {}", e);
                     }
+                    None => {}
                 }
             }
         }
