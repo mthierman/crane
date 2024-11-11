@@ -81,12 +81,35 @@ fn main() {
 
                 match provider {
                     "gh" => {
-                        let split: Vec<&str> = split[1].split("/").collect();
-                        let owner = split[0];
+                        let owner = package
+                            .split(":")
+                            .nth(1)
+                            .unwrap()
+                            .split("/")
+                            .nth(0)
+                            .unwrap();
+                        println!("{}", &owner);
 
-                        let split: Vec<&str> = split[1].split("@").collect();
-                        let repo = split[0];
-                        let branch = split[1];
+                        let repo = package
+                            .split(":")
+                            .nth(1)
+                            .unwrap()
+                            .split("@")
+                            .nth(0)
+                            .unwrap()
+                            .split("/")
+                            .nth(1)
+                            .unwrap();
+                        println!("{}", &repo);
+
+                        let branch = package
+                            .split(":")
+                            .nth(1)
+                            .unwrap()
+                            .split("@")
+                            .nth(1)
+                            .unwrap();
+                        println!("{}", &branch);
 
                         let mut current_dir = crane.cache.clone();
                         current_dir.push(owner);
