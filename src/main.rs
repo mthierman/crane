@@ -76,8 +76,8 @@ fn main() {
             let manifest = serde_json::from_reader::<_, Manifest>(crane.reader).unwrap();
 
             for package in manifest.packages.iter() {
-                let split: Vec<&str> = package.split(":").collect();
-                let provider = split[0];
+                let provider = package.split(":").nth(0).unwrap();
+                println!("{}", provider);
 
                 match provider {
                     "gh" => {
@@ -113,13 +113,8 @@ fn main() {
                             .output()
                             .unwrap();
 
-                        // let split: Vec<&str> = repo.split("/").collect();
-                        // let mut original = package_cache.clone();
                         current_dir.push(repo);
                         current_dir.push(branch);
-                        // original.push(split[0]);
-                        // original.push(split[1]);
-                        // println!("{}", original.display());
 
                         println!("{}", current_dir.display());
                         let mut link = std::env::current_dir().unwrap();
@@ -132,9 +127,9 @@ fn main() {
                         symlink_dir(current_dir, link).unwrap();
                     }
                     "nuget" => {
-                        let package = split[1].split("@").next().unwrap();
-                        let version = split[1].split("@").nth(1).unwrap();
-                        println!("Installing {}@{}...", package, version);
+                        // let package = split[1].split("@").next().unwrap();
+                        // let version = split[1].split("@").nth(1).unwrap();
+                        // println!("Installing {}@{}...", package, version);
 
                         // Command::new("nuget")
                         //     .current_dir(&package_cache)
