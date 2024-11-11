@@ -96,70 +96,65 @@ fn main() {
 
                 match provider {
                     "gh" => {
-                        // let owner = package
-                        //     .split(":")
-                        //     .nth(1)
-                        //     .unwrap()
-                        //     .split("/")
-                        //     .nth(0)
-                        //     .unwrap();
-                        // println!("{}", &owner);
+                        let owner = package
+                            .split(":")
+                            .nth(1)
+                            .unwrap()
+                            .split("/")
+                            .nth(0)
+                            .unwrap();
 
-                        // let repo = package
-                        //     .split(":")
-                        //     .nth(1)
-                        //     .unwrap()
-                        //     .split("@")
-                        //     .nth(0)
-                        //     .unwrap()
-                        //     .split("/")
-                        //     .nth(1)
-                        //     .unwrap();
-                        // println!("{}", &repo);
+                        let repo = package
+                            .split(":")
+                            .nth(1)
+                            .unwrap()
+                            .split("@")
+                            .nth(0)
+                            .unwrap()
+                            .split("/")
+                            .nth(1)
+                            .unwrap();
 
-                        // let branch = package
-                        //     .split(":")
-                        //     .nth(1)
-                        //     .unwrap()
-                        //     .split("@")
-                        //     .nth(1)
-                        //     .unwrap();
-                        // println!("{}", &branch);
+                        let branch = package
+                            .split(":")
+                            .nth(1)
+                            .unwrap()
+                            .split("@")
+                            .nth(1)
+                            .unwrap();
 
-                        // let mut out_dir = crane.packages.clone();
-                        // out_dir.push("gh");
-                        // out_dir.push(owner);
-                        // println!("{}", out_dir.display());
+                        let mut out_dir = crane.packages.clone();
+                        out_dir.push("gh");
+                        out_dir.push(owner);
 
-                        // if !out_dir.exists() {
-                        //     create_dir_all(&out_dir).unwrap();
-                        // }
+                        if !out_dir.exists() {
+                            create_dir_all(&out_dir).unwrap();
+                        }
 
-                        // Command::new("gh")
-                        //     .current_dir(&out_dir)
-                        //     .args([
-                        //         "repo",
-                        //         "clone",
-                        //         String::from(owner.to_owned() + "/" + repo).as_str(),
-                        //         String::from(repo.to_owned() + "/" + branch).as_str(),
-                        //         "--",
-                        //         "--branch",
-                        //         &branch,
-                        //         "--depth=1",
-                        //     ])
-                        //     .output()
-                        //     .unwrap();
+                        Command::new("gh")
+                            .current_dir(&out_dir)
+                            .args([
+                                "repo",
+                                "clone",
+                                String::from(owner.to_owned() + "/" + repo).as_str(),
+                                String::from(repo.to_owned() + "/" + branch).as_str(),
+                                "--",
+                                "--branch",
+                                &branch,
+                                "--depth=1",
+                            ])
+                            .output()
+                            .unwrap();
 
-                        // out_dir.push(repo);
-                        // out_dir.push(branch);
-                        // println!("{}", out_dir.display());
+                        out_dir.push(repo);
+                        out_dir.push(branch);
 
-                        // let mut link = crane.links.clone();
-                        // link.push(repo);
+                        let mut link = crane.links.clone();
+                        link.push(repo);
 
-                        // if !link.exists() {
-                        //     symlink_dir(&out_dir, link).unwrap();
-                        // }
+                        if !link.exists() {
+                            symlink_dir(&out_dir, link).unwrap();
+                        }
                     }
                     "nuget" => {
                         let package_name = package
@@ -180,7 +175,6 @@ fn main() {
 
                         let mut out_dir = crane.packages.clone();
                         out_dir.push("nuget");
-                        println!("{}", out_dir.display());
 
                         if !out_dir.exists() {
                             create_dir_all(&out_dir).unwrap();
