@@ -75,6 +75,10 @@ impl Crane {
 fn main() {
     let crane = Crane::new();
 
+    if !crane.root.exists() {
+        create_dir_all(&crane.root).unwrap();
+    }
+
     if !crane.packages.exists() {
         create_dir_all(&crane.packages).unwrap();
     }
