@@ -13,8 +13,7 @@ fn root() -> String {
 }
 
 fn compile_resource(path: PathBuf) {
-    let rc = Command::new("rc").status();
-    if rc.is_ok() {
+    if Command::new("rc").status().is_ok() {
         if !path.exists() {
             println!("cargo:warning={} not found", path.display());
         } else {
