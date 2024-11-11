@@ -127,7 +127,6 @@ struct Crane {
     root: PathBuf,
     packages: PathBuf,
     manifest: PathBuf,
-    reader: BufReader<File>,
     links: PathBuf,
 }
 
@@ -135,16 +134,19 @@ impl Crane {
     fn new() -> Self {
         let root = PathBuf::from(app_data()).join("crane");
         let packages = root.clone().join("packages");
-        let manifest = PathBuf::from("crane.json");
-        let manifest_file = File::open(&manifest).unwrap();
+        // let manifest = PathBuf::from("crane.json");
+        // let manifest_file = File::open(&manifest).unwrap();
 
         Self {
             root: root,
             packages: packages,
-            manifest: manifest,
-            reader: BufReader::new(manifest_file),
+            manifest: PathBuf::from("crane.json"),
             links: std::env::current_dir().unwrap().join("crane_packages"),
         }
+    }
+
+    fn reader(file: File) -> BufReader<File> {
+        BufReader::new(file)
     }
 }
 
@@ -163,9 +165,10 @@ fn main() {
         create_dir_all(&crane.links).unwrap();
     }
 
-    match crane.reader.get_ref().metadata() {
-        Ok(_) => {
-            let manifest = serde_json::from_reader::<_, Manifest>(crane.reader).unwrap();
+    match File::open(&crane.manifest) {
+        Ok(manifest_file) => {
+            let reader = BufReader::new(manifest_file);
+            let manifest = serde_json::from_reader::<_, Manifest>(reader).unwrap();
 
             for package in manifest.packages.iter() {
                 let provider = package.split(":").nth(0).unwrap();
