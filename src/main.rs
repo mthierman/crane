@@ -54,10 +54,35 @@ impl GitHub {
     }
 }
 
-// struct Nuget {
-//     package: String,
-//     version: String,
-// }
+struct Nuget {
+    name: String,
+    version: String,
+}
+
+impl Nuget {
+    fn new(package: &str) -> Self {
+        Self {
+            name: String::from(
+                package
+                    .split(":")
+                    .nth(1)
+                    .unwrap()
+                    .split("@")
+                    .nth(0)
+                    .unwrap(),
+            ),
+            version: String::from(
+                package
+                    .split(":")
+                    .nth(1)
+                    .unwrap()
+                    .split("@")
+                    .nth(1)
+                    .unwrap(),
+            ),
+        }
+    }
+}
 
 #[derive(Debug)]
 struct Crane {
@@ -166,21 +191,7 @@ fn main() {
                         }
                     }
                     "nuget" => {
-                        let package_name = package
-                            .split(":")
-                            .nth(1)
-                            .unwrap()
-                            .split("@")
-                            .nth(0)
-                            .unwrap();
-
-                        let version = package
-                            .split(":")
-                            .nth(1)
-                            .unwrap()
-                            .split("@")
-                            .nth(1)
-                            .unwrap();
+                        let nuget = Nuget::new(package);
 
                         let mut out_dir = crane.packages.clone();
                         out_dir.push("nuget");
@@ -191,18 +202,18 @@ fn main() {
 
                         Command::new("nuget")
                             .current_dir(&out_dir)
-                            .args(["install", &package_name, "-Version", &version])
+                            .args(["install", &nuget.name, "-Version", &nuget.version])
                             .output()
                             .unwrap();
 
-                        out_dir.push(package_name.to_owned() + "." + version);
-                        println!("{}", out_dir.display());
+                        let id = format!("{}.{}", &nuget.name, &nuget.version);
+                        out_dir.push(&id);
 
                         let mut link = crane.links.clone();
-                        link.push(package.split(":").nth(1).unwrap());
+                        link.push(&id);
 
                         if !link.exists() {
-                            symlink_dir(&out_dir, link).unwrap();
+                            symlink_dir(&out_dir, &link).unwrap();
                         }
                     }
                     _ => {
