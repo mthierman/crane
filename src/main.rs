@@ -111,23 +111,22 @@ fn main() {
                             .unwrap();
                         println!("{}", &branch);
 
-                        let mut current_dir = crane.cache.clone();
-                        current_dir.push(owner);
+                        let mut out_dir = crane.cache.clone();
+                        out_dir.push("gh");
+                        out_dir.push(owner);
+                        println!("{}", out_dir.display());
 
-                        if !current_dir.exists() {
-                            create_dir_all(&current_dir).unwrap();
+                        if !out_dir.exists() {
+                            create_dir_all(&out_dir).unwrap();
                         }
 
-                        let repo_to_clone: String = owner.to_owned() + "/" + repo;
-                        let out_dir = repo.to_owned() + "/" + branch;
-
                         Command::new("gh")
-                            .current_dir(&current_dir)
+                            .current_dir(&out_dir)
                             .args([
                                 "repo",
                                 "clone",
-                                &repo_to_clone,
-                                &out_dir,
+                                String::from(owner.to_owned() + "/" + repo).as_str(),
+                                String::from(repo.to_owned() + "/" + branch).as_str(),
                                 "--",
                                 "--branch",
                                 &branch,
@@ -136,18 +135,18 @@ fn main() {
                             .output()
                             .unwrap();
 
-                        current_dir.push(repo);
-                        current_dir.push(branch);
+                        // current_dir.push(repo);
+                        // current_dir.push(branch);
 
-                        println!("{}", current_dir.display());
-                        let mut link = std::env::current_dir().unwrap();
-                        link.push("crane_packages");
-                        if !link.exists() {
-                            create_dir_all(&link).unwrap();
-                        }
-                        link.push(repo);
+                        // println!("{}", current_dir.display());
+                        // let mut link = std::env::current_dir().unwrap();
+                        // link.push("crane_packages");
+                        // if !link.exists() {
+                        //     create_dir_all(&link).unwrap();
+                        // }
+                        // link.push(repo);
 
-                        symlink_dir(current_dir, link).unwrap();
+                        // symlink_dir(current_dir, link).unwrap();
                     }
                     "nuget" => {
                         // let package = split[1].split("@").next().unwrap();
