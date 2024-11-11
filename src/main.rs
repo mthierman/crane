@@ -134,8 +134,6 @@ impl Crane {
     fn new() -> Self {
         let root = PathBuf::from(app_data()).join("crane");
         let packages = root.clone().join("packages");
-        // let manifest = PathBuf::from("crane.json");
-        // let manifest_file = File::open(&manifest).unwrap();
 
         Self {
             root: root,
