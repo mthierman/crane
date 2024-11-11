@@ -185,6 +185,16 @@ fn main() {
                             .args(["install", &package_name, "-Version", &version])
                             .output()
                             .unwrap();
+
+                        out_dir.push(package_name.to_owned() + "." + version);
+                        println!("{}", out_dir.display());
+
+                        let mut link = crane.links.clone();
+                        link.push(package.split(":").nth(1).unwrap());
+
+                        if !link.exists() {
+                            symlink_dir(&out_dir, link).unwrap();
+                        }
                     }
                     _ => {
                         println!("ERROR!")
