@@ -50,9 +50,11 @@ fn main() {
     println!("cargo::rustc-link-arg-bins=/WX");
     // println!("cargo::rustc-link-arg-bins=/LINKREPROFULLPATHRSP:crane.rsp");
 
-    let rc: PathBuf = [root().as_str(), "data", "app.rc"].iter().collect();
+    let root = env::current_dir().unwrap();
+
+    let rc = root.join("path").join("app.rc");
     compile_resource(rc);
 
-    let manifest: PathBuf = [root().as_str(), "data", "app.manifest"].iter().collect();
+    let manifest = root.join("data").join("app.manifest");
     embed_manifest(manifest);
 }
