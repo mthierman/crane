@@ -175,7 +175,7 @@ impl HTTP {
             .unwrap();
     }
 
-    fn xz<P: AsRef<Path>>(&self, out_dir: &P) {
+    fn tar_xz<P: AsRef<Path>>(&self, out_dir: &P) {
         Command::new("tar")
             .current_dir(&out_dir)
             .args(["-xf", self.url.path_segments().unwrap().last().unwrap()])
@@ -257,6 +257,23 @@ fn main() {
                         }
 
                         http.download(&out_dir);
+
+                        match PathBuf::from(http.url.path_segments().unwrap().last().unwrap())
+                            .extension()
+                            .unwrap()
+                            .to_str()
+                        {
+                            Some("zip") => {
+                                http.zip(&out_dir);
+                            }
+                            Some("tar.xz") => {
+                                http.tar_xz(&out_dir);
+                            }
+                            Some(e) => {
+                                println!("{} file extension not supported", e);
+                            }
+                            None => {}
+                        }
                     }
                     Some("gh") => {
                         let gh = GitHub::new(package);
