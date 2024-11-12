@@ -266,7 +266,7 @@ fn main() {
                             Some("zip") => {
                                 http.zip(&out_dir);
                             }
-                            Some("tar.xz") => {
+                            Some("xz") => {
                                 http.tar_xz(&out_dir);
                             }
                             Some(e) => {
