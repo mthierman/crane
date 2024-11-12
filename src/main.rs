@@ -159,12 +159,41 @@ impl HTTP {
         }
     }
 
-    fn download<P: AsRef<Path>>(&self, out_file: &P) {
+    fn zip<P: AsRef<Path>>(&self, out_dir: &P) {
+        Command::new("7z")
+            .current_dir(&out_dir)
+            .args([
+                "x",
+                self.url.path_segments().unwrap().last().unwrap(),
+                PathBuf::from(self.url.path_segments().unwrap().last().unwrap())
+                    .file_stem()
+                    .unwrap()
+                    .to_str()
+                    .unwrap(),
+            ])
+            .output()
+            .unwrap();
+    }
+
+    fn xz<P: AsRef<Path>>(&self, out_dir: &P) {
+        Command::new("tar")
+            .current_dir(&out_dir)
+            .args(["-xf", self.url.path_segments().unwrap().last().unwrap()])
+            .output()
+            .unwrap();
+    }
+
+    fn download<P: AsRef<Path>>(&self, out_dir: &P) {
+        let out_file = out_dir
+            .as_ref()
+            .to_path_buf()
+            .join(self.url.path_segments().unwrap().last().unwrap());
+
         unsafe {
             URLDownloadToFileW(
                 None,
                 &HSTRING::from(&self.url.to_string()),
-                &HSTRING::from(out_file.as_ref().to_str().unwrap()),
+                &HSTRING::from(out_file.to_str().unwrap()),
                 0,
                 None,
             )
@@ -227,7 +256,6 @@ fn main() {
                             create_dir_all(&out_dir).unwrap();
                         }
 
-                        out_dir.push(http.url.path_segments().unwrap().last().unwrap());
                         http.download(&out_dir);
                     }
                     Some("gh") => {
