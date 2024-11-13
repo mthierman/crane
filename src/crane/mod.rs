@@ -23,7 +23,7 @@ struct Paths {
 
 #[derive(Debug)]
 pub struct Crane {
-    pub paths: Paths,
+    paths: Paths,
 }
 
 impl Crane {
