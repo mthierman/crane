@@ -15,10 +15,10 @@ pub struct Manifest {
 
 #[derive(Debug)]
 pub struct Crane {
-    pub root: PathBuf,
-    pub packages: PathBuf,
+    pub data: PathBuf,
+    pub cache: PathBuf,
     pub manifest: PathBuf,
-    pub links: PathBuf,
+    pub packages: PathBuf,
 }
 
 impl Crane {
@@ -33,28 +33,28 @@ impl Crane {
             .to_string()
             .unwrap()
         };
-        let root = PathBuf::from(app_data).join("crane");
-        let packages = root.clone().join("packages");
+        let data = PathBuf::from(app_data).join("crane");
+        let cache = data.clone().join("cache");
 
         Self {
-            root: root,
-            packages: packages,
+            data: data,
+            cache: cache,
             manifest: PathBuf::from("crane.json"),
-            links: std::env::current_dir().unwrap().join("crane_packages"),
+            packages: std::env::current_dir().unwrap().join("crane_packages"),
         }
     }
 
     pub fn create_dirs(&self) {
-        if !self.root.exists() {
-            create_dir_all(&self.root).unwrap();
+        if !self.data.exists() {
+            create_dir_all(&self.data).unwrap();
+        }
+
+        if !self.cache.exists() {
+            create_dir_all(&self.cache).unwrap();
         }
 
         if !self.packages.exists() {
             create_dir_all(&self.packages).unwrap();
-        }
-
-        if !self.links.exists() {
-            create_dir_all(&self.links).unwrap();
         }
     }
 }
@@ -106,7 +106,7 @@ pub fn link(crane: &Crane) {
                         out_dir.push(&gh.repo);
                         out_dir.push(&gh.branch);
 
-                        let mut link = crane.links.clone();
+                        let mut link = crane.packages.clone();
                         link.push(&gh.repo);
 
                         if !link.exists() {
@@ -130,7 +130,7 @@ pub fn link(crane: &Crane) {
                         let id = format!("{}.{}", &nuget.name, &nuget.version);
                         out_dir.push(&id);
 
-                        let mut link = crane.links.clone();
+                        let mut link = crane.packages.clone();
                         link.push(&id);
 
                         if !link.exists() {
@@ -152,5 +152,5 @@ pub fn link(crane: &Crane) {
 }
 
 pub fn clean(crane: &Crane) {
-    remove_dir_all(&crane.links).unwrap();
+    remove_dir_all(&crane.packages).unwrap();
 }
