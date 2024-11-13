@@ -346,8 +346,6 @@ fn main() {
         create_dir_all(&crane.links).unwrap();
     }
 
-    let command = args().nth(1);
-
     match args().nth(1).as_deref() {
         Some("link") => link(&crane),
         Some("clean") => clean(&crane),
