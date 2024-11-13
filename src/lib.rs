@@ -9,8 +9,8 @@ use std::path::PathBuf;
 use windows::Win32::{Foundation::HANDLE, UI::Shell::*};
 
 #[derive(Deserialize, Debug)]
-pub struct Manifest {
-    pub packages: Vec<String>,
+struct Manifest {
+    packages: Vec<String>,
 }
 
 #[derive(Debug)]
@@ -65,7 +65,7 @@ impl Crane {
         }
     }
 
-    pub fn read_manifest(&self) -> Option<Manifest> {
+    fn read_manifest(&self) -> Option<Manifest> {
         match File::open(&self.paths.manifest) {
             Ok(file) => {
                 let reader = BufReader::new(file);
