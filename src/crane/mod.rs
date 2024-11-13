@@ -1,12 +1,12 @@
+mod providers;
+
+use providers::*;
 use serde::Deserialize;
 use std::fs::*;
 use std::io::BufReader;
 use std::os::windows::fs::symlink_dir;
 use std::path::PathBuf;
 use windows::Win32::{Foundation::HANDLE, UI::Shell::*};
-
-mod providers;
-use providers::*;
 
 #[derive(Deserialize, Debug)]
 pub struct Manifest {
