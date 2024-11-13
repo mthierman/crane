@@ -171,4 +171,27 @@ impl Crane {
     pub fn clean(&self) {
         remove_dir_all(&self.paths.packages).unwrap();
     }
+
+    pub fn manifest(&self) {
+        if let Ok(manifest) = read_to_string(&self.paths.manifest) {
+            println!("{}", manifest);
+        }
+        // match File::open(&self.paths.manifest) {
+        //     Ok(file) => {
+        //         let reader = BufReader::new(file);
+        //         Some(serde_json::from_reader::<_, Manifest>(reader).unwrap())
+        //     }
+        //     Err(_) => {
+        //         match File::create(&self.paths.manifest) {
+        //             Ok(_) => {
+        //                 println!("Manifest created");
+        //             }
+        //             Err(e) => {
+        //                 println!("Manifest creation failed: {}", e);
+        //             }
+        //         }
+        //         None
+        //     }
+        // }
+    }
 }

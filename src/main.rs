@@ -9,6 +9,7 @@ fn main() {
     match args().nth(1).as_deref() {
         Some("link") => crane.link(),
         Some("clean") => crane.clean(),
+        Some("manifest") => crane.manifest(),
         Some(_) => {}
         None => {}
     }
