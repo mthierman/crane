@@ -14,11 +14,16 @@ pub struct Manifest {
 }
 
 #[derive(Debug)]
+struct Paths {
+    data: PathBuf,
+    cache: PathBuf,
+    manifest: PathBuf,
+    packages: PathBuf,
+}
+
+#[derive(Debug)]
 pub struct Crane {
-    pub data: PathBuf,
-    pub cache: PathBuf,
-    pub manifest: PathBuf,
-    pub packages: PathBuf,
+    pub paths: Paths,
 }
 
 impl Crane {
@@ -37,30 +42,32 @@ impl Crane {
         let cache = data.clone().join("cache");
 
         Self {
-            data: data,
-            cache: cache,
-            manifest: PathBuf::from("crane.json"),
-            packages: std::env::current_dir().unwrap().join("crane_packages"),
+            paths: Paths {
+                cache: cache,
+                data: data,
+                manifest: PathBuf::from("crane.json"),
+                packages: std::env::current_dir().unwrap().join("crane_packages"),
+            },
         }
     }
 
     pub fn create_dirs(&self) {
-        if !self.data.exists() {
-            create_dir_all(&self.data).unwrap();
+        if !self.paths.data.exists() {
+            create_dir_all(&self.paths.data).unwrap();
         }
 
-        if !self.cache.exists() {
-            create_dir_all(&self.cache).unwrap();
+        if !self.paths.cache.exists() {
+            create_dir_all(&self.paths.cache).unwrap();
         }
 
-        if !self.packages.exists() {
-            create_dir_all(&self.packages).unwrap();
+        if !self.paths.packages.exists() {
+            create_dir_all(&self.paths.packages).unwrap();
         }
     }
 }
 
 pub fn link(crane: &Crane) {
-    match File::open(&crane.manifest) {
+    match File::open(&crane.paths.manifest) {
         Ok(manifest_file) => {
             let reader = BufReader::new(manifest_file);
             let manifest = serde_json::from_reader::<_, Manifest>(reader).unwrap();
@@ -70,7 +77,7 @@ pub fn link(crane: &Crane) {
                     Some("http") | Some("https") => {
                         let http = HTTP::new(package);
 
-                        let mut out_dir = crane.packages.clone();
+                        let mut out_dir = crane.paths.packages.clone();
                         out_dir.push("http");
 
                         if !out_dir.exists() {
@@ -94,7 +101,7 @@ pub fn link(crane: &Crane) {
                     Some("gh") => {
                         let gh = GitHub::new(package);
 
-                        let mut out_dir = crane.packages.clone();
+                        let mut out_dir = crane.paths.packages.clone();
                         out_dir.push("gh");
                         out_dir.push(&gh.owner);
 
@@ -106,7 +113,7 @@ pub fn link(crane: &Crane) {
                         out_dir.push(&gh.repo);
                         out_dir.push(&gh.branch);
 
-                        let mut link = crane.packages.clone();
+                        let mut link = crane.paths.packages.clone();
                         link.push(&gh.repo);
 
                         if !link.exists() {
@@ -118,7 +125,7 @@ pub fn link(crane: &Crane) {
                     Some("nuget") => {
                         let nuget = Nuget::new(package);
 
-                        let mut out_dir = crane.packages.clone();
+                        let mut out_dir = crane.paths.packages.clone();
                         out_dir.push("nuget");
 
                         if !out_dir.exists() {
@@ -130,7 +137,7 @@ pub fn link(crane: &Crane) {
                         let id = format!("{}.{}", &nuget.name, &nuget.version);
                         out_dir.push(&id);
 
-                        let mut link = crane.packages.clone();
+                        let mut link = crane.paths.packages.clone();
                         link.push(&id);
 
                         if !link.exists() {
@@ -146,11 +153,11 @@ pub fn link(crane: &Crane) {
         }
         Err(_) => {
             println!("Manifest doesn't exist, creating...");
-            let _ = File::create(&crane.manifest);
+            let _ = File::create(&crane.paths.manifest);
         }
     }
 }
 
 pub fn clean(crane: &Crane) {
-    remove_dir_all(&crane.packages).unwrap();
+    remove_dir_all(&crane.paths.packages).unwrap();
 }
