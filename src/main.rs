@@ -156,15 +156,16 @@ struct HTTP {
 impl HTTP {
     fn new(package: &str) -> Self {
         let url = Url::parse(package).unwrap();
+        let extension = PathBuf::from(&url.path_segments().unwrap().last().unwrap())
+            .extension()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_owned();
 
         Self {
             url: url,
-            extension: PathBuf::from(url.path_segments().unwrap().last().unwrap())
-                .extension()
-                .unwrap()
-                .to_str()
-                .unwrap()
-                .to_owned(),
+            extension: extension,
         }
     }
 
