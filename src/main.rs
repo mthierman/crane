@@ -12,7 +12,7 @@ fn app_data() -> String {
     unsafe {
         SHGetKnownFolderPath(
             &FOLDERID_LocalAppData,
-            KNOWN_FOLDER_FLAG::default(),
+            KF_FLAG_DONT_VERIFY,
             HANDLE::default(),
         )
         .unwrap()
