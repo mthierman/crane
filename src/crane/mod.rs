@@ -43,6 +43,20 @@ impl Crane {
             links: std::env::current_dir().unwrap().join("crane_packages"),
         }
     }
+
+    pub fn create_dirs(&self) {
+        if !self.root.exists() {
+            create_dir_all(&self.root).unwrap();
+        }
+
+        if !self.packages.exists() {
+            create_dir_all(&self.packages).unwrap();
+        }
+
+        if !self.links.exists() {
+            create_dir_all(&self.links).unwrap();
+        }
+    }
 }
 
 pub fn link(crane: &Crane) {

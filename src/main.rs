@@ -2,22 +2,11 @@ mod crane;
 
 use crane::*;
 use std::env::*;
-use std::fs::*;
 
 fn main() {
     let crane = Crane::new();
 
-    if !crane.root.exists() {
-        create_dir_all(&crane.root).unwrap();
-    }
-
-    if !crane.packages.exists() {
-        create_dir_all(&crane.packages).unwrap();
-    }
-
-    if !crane.links.exists() {
-        create_dir_all(&crane.links).unwrap();
-    }
+    crane.create_dirs();
 
     match args().nth(1).as_deref() {
         Some("link") => link(&crane),
