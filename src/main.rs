@@ -9,8 +9,8 @@ fn main() {
     crane.create_dirs();
 
     match args().nth(1).as_deref() {
-        Some("link") => link(&crane),
-        Some("clean") => clean(&crane),
+        Some("link") => crane.link(),
+        Some("clean") => crane.clean(),
         Some(_) => {}
         None => {}
     }
