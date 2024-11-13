@@ -150,12 +150,21 @@ impl Nuget {
 
 struct HTTP {
     url: Url,
+    extension: String,
 }
 
 impl HTTP {
     fn new(package: &str) -> Self {
+        let url = Url::parse(package).unwrap();
+
         Self {
-            url: Url::parse(package).unwrap(),
+            url: url,
+            extension: PathBuf::from(url.path_segments().unwrap().last().unwrap())
+                .extension()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .to_owned(),
         }
     }
 
@@ -258,21 +267,16 @@ fn main() {
 
                         http.download(&out_dir);
 
-                        match PathBuf::from(http.url.path_segments().unwrap().last().unwrap())
-                            .extension()
-                            .unwrap()
-                            .to_str()
-                        {
-                            Some("zip") => {
+                        match http.extension.as_str() {
+                            "zip" => {
                                 http.zip(&out_dir);
                             }
-                            Some("xz") => {
+                            "xz" => {
                                 http.tar_xz(&out_dir);
                             }
-                            Some(e) => {
+                            e => {
                                 println!("{} file extension not supported", e);
                             }
-                            None => {}
                         }
                     }
                     Some("gh") => {
