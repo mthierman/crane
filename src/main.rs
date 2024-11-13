@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use std::env::*;
 use std::fs::*;
 use std::io::BufReader;
 use std::os::windows::fs::symlink_dir;
@@ -234,21 +235,7 @@ impl Crane {
     }
 }
 
-fn main() {
-    let crane = Crane::new();
-
-    if !crane.root.exists() {
-        create_dir_all(&crane.root).unwrap();
-    }
-
-    if !crane.packages.exists() {
-        create_dir_all(&crane.packages).unwrap();
-    }
-
-    if !crane.links.exists() {
-        create_dir_all(&crane.links).unwrap();
-    }
-
+fn link(crane: &Crane) {
     match File::open(&crane.manifest) {
         Ok(manifest_file) => {
             let reader = BufReader::new(manifest_file);
@@ -337,5 +324,34 @@ fn main() {
             println!("Manifest doesn't exist, creating...");
             let _ = File::create(&crane.manifest);
         }
+    }
+}
+
+fn clean(crane: &Crane) {
+    remove_dir_all(&crane.links).unwrap();
+}
+
+fn main() {
+    let crane = Crane::new();
+
+    if !crane.root.exists() {
+        create_dir_all(&crane.root).unwrap();
+    }
+
+    if !crane.packages.exists() {
+        create_dir_all(&crane.packages).unwrap();
+    }
+
+    if !crane.links.exists() {
+        create_dir_all(&crane.links).unwrap();
+    }
+
+    let command = args().nth(1);
+
+    match args().nth(1).as_deref() {
+        Some("link") => link(&crane),
+        Some("clean") => clean(&crane),
+        Some(_) => {}
+        None => {}
     }
 }
