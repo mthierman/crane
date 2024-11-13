@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use windows::Win32::{Foundation::HANDLE, UI::Shell::*};
 
 mod providers;
-use crate::crane::providers::*;
+use providers::*;
 
 #[derive(Deserialize, Debug)]
 pub struct Manifest {
