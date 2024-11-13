@@ -64,96 +64,107 @@ impl Crane {
             create_dir_all(&self.paths.packages).unwrap();
         }
     }
+
+    pub fn read_manifest(&self) -> Option<Manifest> {
+        match File::open(&self.paths.manifest) {
+            Ok(file) => {
+                let reader = BufReader::new(file);
+                Some(serde_json::from_reader::<_, Manifest>(reader).unwrap())
+            }
+            Err(_) => {
+                match File::create(&self.paths.manifest) {
+                    Ok(_) => {
+                        println!("Manifest created");
+                    }
+                    Err(e) => {
+                        println!("Manifest creation failed: {}", e);
+                    }
+                }
+                None
+            }
+        }
+    }
 }
 
 pub fn link(crane: &Crane) {
-    match File::open(&crane.paths.manifest) {
-        Ok(manifest_file) => {
-            let reader = BufReader::new(manifest_file);
-            let manifest = serde_json::from_reader::<_, Manifest>(reader).unwrap();
+    if let Some(manifest) = crane.read_manifest() {
+        for package in manifest.packages.iter() {
+            match package.split(":").nth(0) {
+                Some("http") | Some("https") => {
+                    let http = HTTP::new(package);
 
-            for package in manifest.packages.iter() {
-                match package.split(":").nth(0) {
-                    Some("http") | Some("https") => {
-                        let http = HTTP::new(package);
+                    let mut out_dir = crane.paths.packages.clone();
+                    out_dir.push("http");
 
-                        let mut out_dir = crane.paths.packages.clone();
-                        out_dir.push("http");
+                    if !out_dir.exists() {
+                        create_dir_all(&out_dir).unwrap();
+                    }
 
-                        if !out_dir.exists() {
-                            create_dir_all(&out_dir).unwrap();
+                    http.download(&out_dir);
+
+                    match http.extension.as_str() {
+                        "zip" => {
+                            http.zip(&out_dir);
                         }
-
-                        http.download(&out_dir);
-
-                        match http.extension.as_str() {
-                            "zip" => {
-                                http.zip(&out_dir);
-                            }
-                            "xz" => {
-                                http.tar_xz(&out_dir);
-                            }
-                            e => {
-                                println!("{} file extension not supported", e);
-                            }
+                        "xz" => {
+                            http.tar_xz(&out_dir);
+                        }
+                        e => {
+                            println!("{} file extension not supported", e);
                         }
                     }
-                    Some("gh") => {
-                        let gh = GitHub::new(package);
-
-                        let mut out_dir = crane.paths.packages.clone();
-                        out_dir.push("gh");
-                        out_dir.push(&gh.owner);
-
-                        if !out_dir.exists() {
-                            create_dir_all(&out_dir).unwrap();
-                            gh.download(&out_dir);
-                        }
-
-                        out_dir.push(&gh.repo);
-                        out_dir.push(&gh.branch);
-
-                        let mut link = crane.paths.packages.clone();
-                        link.push(&gh.repo);
-
-                        if !link.exists() {
-                            symlink_dir(&out_dir, &link).unwrap();
-                        }
-
-                        gh.update(&out_dir);
-                    }
-                    Some("nuget") => {
-                        let nuget = Nuget::new(package);
-
-                        let mut out_dir = crane.paths.packages.clone();
-                        out_dir.push("nuget");
-
-                        if !out_dir.exists() {
-                            create_dir_all(&out_dir).unwrap();
-                        }
-
-                        nuget.download(&out_dir);
-
-                        let id = format!("{}.{}", &nuget.name, &nuget.version);
-                        out_dir.push(&id);
-
-                        let mut link = crane.paths.packages.clone();
-                        link.push(&id);
-
-                        if !link.exists() {
-                            symlink_dir(&out_dir, &link).unwrap();
-                        }
-                    }
-                    Some(e) => {
-                        println!("Incorrect provider detected {}", e);
-                    }
-                    None => {}
                 }
+                Some("gh") => {
+                    let gh = GitHub::new(package);
+
+                    let mut out_dir = crane.paths.packages.clone();
+                    out_dir.push("gh");
+                    out_dir.push(&gh.owner);
+
+                    if !out_dir.exists() {
+                        create_dir_all(&out_dir).unwrap();
+                        gh.download(&out_dir);
+                    }
+
+                    out_dir.push(&gh.repo);
+                    out_dir.push(&gh.branch);
+
+                    let mut link = crane.paths.packages.clone();
+                    link.push(&gh.repo);
+
+                    if !link.exists() {
+                        symlink_dir(&out_dir, &link).unwrap();
+                    }
+
+                    gh.update(&out_dir);
+                }
+                Some("nuget") => {
+                    let nuget = Nuget::new(package);
+
+                    let mut out_dir = crane.paths.packages.clone();
+                    out_dir.push("nuget");
+
+                    if !out_dir.exists() {
+                        create_dir_all(&out_dir).unwrap();
+                    }
+
+                    nuget.download(&out_dir);
+
+                    let id = format!("{}.{}", &nuget.name, &nuget.version);
+                    out_dir.push(&id);
+
+                    let mut link = crane.paths.packages.clone();
+                    link.push(&id);
+
+                    if !link.exists() {
+                        symlink_dir(&out_dir, &link).unwrap();
+                    }
+                }
+                Some(e) => {
+                    println!("Incorrect provider detected {}", e);
+                }
+                None => {}
             }
-        }
-        Err(_) => {
-            println!("Manifest doesn't exist, creating...");
-            let _ = File::create(&crane.paths.manifest);
         }
     }
 }
