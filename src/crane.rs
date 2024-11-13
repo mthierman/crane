@@ -8,19 +8,6 @@ use url::Url;
 use windows::core::HSTRING;
 use windows::Win32::{Foundation::HANDLE, System::Com::Urlmon::URLDownloadToFileW, UI::Shell::*};
 
-pub fn app_data() -> String {
-    unsafe {
-        SHGetKnownFolderPath(
-            &FOLDERID_LocalAppData,
-            KF_FLAG_DONT_VERIFY,
-            HANDLE::default(),
-        )
-        .unwrap()
-        .to_string()
-        .unwrap()
-    }
-}
-
 #[derive(Deserialize, Debug)]
 pub struct Manifest {
     pub packages: Vec<String>,
@@ -222,7 +209,17 @@ pub struct Crane {
 
 impl Crane {
     pub fn new() -> Self {
-        let root = PathBuf::from(app_data()).join("crane");
+        let app_data = unsafe {
+            SHGetKnownFolderPath(
+                &FOLDERID_LocalAppData,
+                KF_FLAG_DONT_VERIFY,
+                HANDLE::default(),
+            )
+            .unwrap()
+            .to_string()
+            .unwrap()
+        };
+        let root = PathBuf::from(app_data).join("crane");
         let packages = root.clone().join("packages");
 
         Self {
