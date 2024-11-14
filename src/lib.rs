@@ -2,6 +2,7 @@ mod providers;
 
 use providers::*;
 use serde::Deserialize;
+use std::env::*;
 use std::fs::*;
 use std::io::BufReader;
 use std::os::windows::fs::symlink_dir;
@@ -62,6 +63,16 @@ impl Crane {
 
         if !self.paths.packages.exists() {
             create_dir_all(&self.paths.packages).unwrap();
+        }
+    }
+
+    pub fn parse_args(&self) {
+        match args().nth(1).as_deref() {
+            Some("link") => self.link(),
+            Some("clean") => self.clean(),
+            Some("manifest") => self.manifest(),
+            Some(_) => {}
+            None => {}
         }
     }
 
