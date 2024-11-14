@@ -72,7 +72,7 @@ impl Crane {
         match args().nth(1).as_deref() {
             Some("link") => self.link(),
             Some("clean") => self.clean(),
-            Some("manifest") => self.manifest(),
+            Some("manifest") => self.print_manifest(),
             Some(_) => {}
             None => {}
         }
@@ -185,7 +185,7 @@ impl Crane {
         remove_dir_all(&self.paths.packages).unwrap();
     }
 
-    pub fn manifest(&self) {
+    pub fn print_manifest(&self) {
         if let Ok(manifest) = read_to_string(&self.paths.manifest) {
             println!("{}", manifest);
         }
