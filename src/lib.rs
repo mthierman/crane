@@ -66,7 +66,9 @@ impl Crane {
         }
     }
 
-    pub fn parse_args(&self) {
+    pub fn run(&self) {
+        self.create_dirs();
+
         match args().nth(1).as_deref() {
             Some("link") => self.link(),
             Some("clean") => self.clean(),
