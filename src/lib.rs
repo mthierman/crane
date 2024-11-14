@@ -52,6 +52,12 @@ impl Crane {
             create_dir_all(&cache).unwrap();
         }
 
+        let packages = std::env::current_dir().unwrap().join("crane_packages");
+
+        if !packages.exists() {
+            create_dir_all(&packages).unwrap();
+        }
+
         Self {
             paths: Paths {
                 // cache: cache,
@@ -59,12 +65,6 @@ impl Crane {
                 manifest: PathBuf::from("crane.json"),
                 packages: std::env::current_dir().unwrap().join("crane_packages"),
             },
-        }
-    }
-
-    fn create_package_dir(&self) {
-        if !self.paths.packages.exists() {
-            create_dir_all(&self.paths.packages).unwrap();
         }
     }
 
@@ -99,8 +99,6 @@ impl Crane {
     }
 
     pub fn link(&self) {
-        self.create_package_dir();
-
         if let Some(manifest) = self.read_manifest() {
             for package in manifest.packages.iter() {
                 match package.split(":").nth(0) {
