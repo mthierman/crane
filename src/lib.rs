@@ -52,7 +52,7 @@ impl Crane {
         }
     }
 
-    pub fn create_dirs(&self) {
+    pub fn create_data_dirs(&self) {
         if !self.paths.data.exists() {
             create_dir_all(&self.paths.data).unwrap();
         }
@@ -60,14 +60,16 @@ impl Crane {
         if !self.paths.cache.exists() {
             create_dir_all(&self.paths.cache).unwrap();
         }
+    }
 
+    fn create_package_dir(&self) {
         if !self.paths.packages.exists() {
             create_dir_all(&self.paths.packages).unwrap();
         }
     }
 
     pub fn run(&self) {
-        self.create_dirs();
+        self.create_data_dirs();
 
         match args().nth(1).as_deref() {
             Some("link") => self.link(),
@@ -99,6 +101,8 @@ impl Crane {
     }
 
     pub fn link(&self) {
+        self.create_package_dir();
+
         if let Some(manifest) = self.read_manifest() {
             for package in manifest.packages.iter() {
                 match package.split(":").nth(0) {
