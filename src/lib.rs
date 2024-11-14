@@ -16,8 +16,8 @@ struct Manifest {
 
 #[derive(Debug)]
 struct Paths {
-    data: PathBuf,
-    cache: PathBuf,
+    // data: PathBuf,
+    // cache: PathBuf,
     manifest: PathBuf,
     packages: PathBuf,
 }
@@ -39,26 +39,26 @@ impl Crane {
             .to_string()
             .unwrap()
         };
+
         let data = PathBuf::from(app_data).join("crane");
+
+        if !data.exists() {
+            create_dir_all(&data).unwrap();
+        }
+
         let cache = data.clone().join("cache");
+
+        if !cache.exists() {
+            create_dir_all(&cache).unwrap();
+        }
 
         Self {
             paths: Paths {
-                cache: cache,
-                data: data,
+                // cache: cache,
+                // data: data,
                 manifest: PathBuf::from("crane.json"),
                 packages: std::env::current_dir().unwrap().join("crane_packages"),
             },
-        }
-    }
-
-    pub fn create_data_dirs(&self) {
-        if !self.paths.data.exists() {
-            create_dir_all(&self.paths.data).unwrap();
-        }
-
-        if !self.paths.cache.exists() {
-            create_dir_all(&self.paths.cache).unwrap();
         }
     }
 
@@ -69,8 +69,6 @@ impl Crane {
     }
 
     pub fn run(&self) {
-        self.create_data_dirs();
-
         match args().nth(1).as_deref() {
             Some("link") => self.link(),
             Some("clean") => self.clean(),
