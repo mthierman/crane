@@ -16,8 +16,6 @@ struct Manifest {
 
 #[derive(Debug)]
 struct Paths {
-    // data: PathBuf,
-    // cache: PathBuf,
     manifest: PathBuf,
     packages: PathBuf,
 }
@@ -60,8 +58,6 @@ impl Crane {
 
         Self {
             paths: Paths {
-                // cache: cache,
-                // data: data,
                 manifest: PathBuf::from("crane.json"),
                 packages: std::env::current_dir().unwrap().join("crane_packages"),
             },
