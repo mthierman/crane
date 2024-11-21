@@ -57,3 +57,7 @@ pub fn windows_kit() -> PathBuf {
 
     PathBuf::from(String::from_utf8(output.stdout).unwrap().trim())
 }
+
+pub fn resource_compiler() -> PathBuf {
+    windows_kit().join("x64").join("rc.exe")
+}
