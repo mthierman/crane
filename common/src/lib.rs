@@ -44,7 +44,7 @@ pub fn winsdk_bat() -> PathBuf {
 
 pub fn windows_kit() -> PathBuf {
     let script = format!(
-        r#"cmd /C 'call "{}" > NUL && pwsh -C "$env:WindowsSdkVerBinPath"'"#,
+        r#"cmd /C 'call "{}" > NUL && pwsh -noni -nop -C "$env:WindowsSdkVerBinPath"'"#,
         winsdk_bat().to_str().unwrap()
     );
 
@@ -53,7 +53,7 @@ pub fn windows_kit() -> PathBuf {
             ("VSCMD_ARG_HOST_ARCH", "x64"),
             ("VSCMD_ARG_TGT_ARCH", "x64"),
         ])
-        .args(["-C", &script])
+        .args(["-noni", "-nop", "-C", &script])
         .output()
         .unwrap();
 
