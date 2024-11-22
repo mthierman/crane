@@ -12,6 +12,10 @@ pub fn known_folder(id: &GUID, flag: KNOWN_FOLDER_FLAG) -> PathBuf {
     })
 }
 
+pub fn root() -> PathBuf {
+    env::current_dir().unwrap()
+}
+
 pub fn vswhere() -> PathBuf {
     PathBuf::from(known_folder(&FOLDERID_ProgramFilesX86, KF_FLAG_DONT_VERIFY))
         .join("Microsoft Visual Studio")
