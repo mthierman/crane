@@ -3,9 +3,9 @@ use std::{path::PathBuf, process::Command};
 use windows::core::GUID;
 use windows::Win32::{Foundation::HANDLE, UI::Shell::*};
 
-pub fn known_folder(rfid: &GUID) -> PathBuf {
+pub fn known_folder(id: &GUID, flag: KNOWN_FOLDER_FLAG) -> PathBuf {
     PathBuf::from(unsafe {
-        SHGetKnownFolderPath(rfid, KF_FLAG_DONT_VERIFY, HANDLE::default())
+        SHGetKnownFolderPath(id, flag, HANDLE::default())
             .unwrap()
             .to_string()
             .unwrap()
@@ -13,7 +13,7 @@ pub fn known_folder(rfid: &GUID) -> PathBuf {
 }
 
 pub fn vswhere() -> PathBuf {
-    PathBuf::from(known_folder(&FOLDERID_ProgramFilesX86))
+    PathBuf::from(known_folder(&FOLDERID_ProgramFilesX86, KF_FLAG_DONT_VERIFY))
         .join("Microsoft Visual Studio")
         .join("Installer")
         .join("vswhere.exe")
