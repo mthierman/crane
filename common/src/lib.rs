@@ -1,5 +1,15 @@
 use std::{path::PathBuf, process::Command};
+use windows::core::GUID;
 use windows::Win32::{Foundation::HANDLE, UI::Shell::*};
+
+pub fn known_folder(rfid: &GUID) -> PathBuf {
+    PathBuf::from(unsafe {
+        SHGetKnownFolderPath(rfid, KF_FLAG_DONT_VERIFY, HANDLE::default())
+            .unwrap()
+            .to_string()
+            .unwrap()
+    })
+}
 
 pub fn vswhere() -> PathBuf {
     PathBuf::from(unsafe {
