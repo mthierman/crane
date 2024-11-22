@@ -42,7 +42,7 @@ pub fn winsdk_bat() -> PathBuf {
 
 pub fn windows_kit() -> PathBuf {
     let script = format!(
-        r#"cmd /K 'call "{}" > NUL && pwsh -C "$env:WindowsSdkVerBinPath"'"#,
+        r#"cmd /C 'call "{}" > NUL && pwsh -C "$env:WindowsSdkVerBinPath"'"#,
         winsdk_bat().to_str().unwrap()
     );
 

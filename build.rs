@@ -4,7 +4,9 @@ use std::path::*;
 use std::process::*;
 
 fn compile_resource(rc_file: PathBuf) {
-    if Command::new("rc").status().is_ok() {
+    println!("cargo:warning={} not found", resource_compiler().display());
+
+    if Command::new(resource_compiler()).status().is_ok() {
         if !rc_file.exists() {
             println!("cargo:warning={} not found", rc_file.display());
         } else {
