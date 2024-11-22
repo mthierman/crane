@@ -1,3 +1,4 @@
+use std::env;
 use std::{path::PathBuf, process::Command};
 use windows::core::GUID;
 use windows::Win32::{Foundation::HANDLE, UI::Shell::*};
@@ -61,4 +62,37 @@ pub fn windows_kit() -> PathBuf {
 
 pub fn resource_compiler() -> PathBuf {
     windows_kit().join("x64").join("rc.exe")
+}
+
+pub fn compile_resource(rc_file: PathBuf) {
+    let rc = resource_compiler();
+
+    if rc_file.exists() {
+        let root = env::current_dir().unwrap();
+        let res_file = root.join("target").join(format!(
+            "{}.res",
+            rc_file.file_stem().unwrap().to_str().unwrap()
+        ));
+
+        Command::new(&rc)
+            .args(["/fo", res_file.to_str().unwrap(), rc_file.to_str().unwrap()])
+            .status()
+            .unwrap();
+
+        println!("cargo::rustc-link-arg-bins={}", res_file.to_str().unwrap());
+    } else {
+        println!("cargo:warning={} not found", rc_file.display());
+    }
+}
+
+pub fn embed_manifest(path: PathBuf) {
+    if !path.exists() {
+        println!("cargo:warning={} not found", path.display());
+    } else {
+        println!("cargo::rustc-link-arg-bins=/MANIFEST:EMBED");
+        println!(
+            "cargo::rustc-link-arg-bins=/MANIFESTINPUT:{}",
+            path.to_str().unwrap()
+        );
+    }
 }
