@@ -68,7 +68,8 @@ pub fn compile_resource(rc_file: PathBuf) {
     let rc = resource_compiler();
 
     if rc_file.exists() {
-        let root = env::current_dir().unwrap();
+        let root = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+
         let res_file = root.join("target").join(format!(
             "{}.res",
             rc_file.file_stem().unwrap().to_str().unwrap()
