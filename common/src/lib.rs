@@ -12,19 +12,10 @@ pub fn known_folder(rfid: &GUID) -> PathBuf {
 }
 
 pub fn vswhere() -> PathBuf {
-    PathBuf::from(unsafe {
-        SHGetKnownFolderPath(
-            &FOLDERID_ProgramFilesX86,
-            KF_FLAG_DONT_VERIFY,
-            HANDLE::default(),
-        )
-        .unwrap()
-        .to_string()
-        .unwrap()
-    })
-    .join("Microsoft Visual Studio")
-    .join("Installer")
-    .join("vswhere.exe")
+    PathBuf::from(known_folder(&FOLDERID_ProgramFilesX86))
+        .join("Microsoft Visual Studio")
+        .join("Installer")
+        .join("vswhere.exe")
 }
 
 pub fn install_path() -> PathBuf {
