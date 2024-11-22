@@ -43,17 +43,21 @@ pub fn winsdk_bat() -> PathBuf {
 }
 
 pub fn windows_kit() -> PathBuf {
-    let script = format!(
-        r#"cmd /C 'call "{}" > NUL && pwsh -noni -nop -C "$env:WindowsSdkVerBinPath"'"#,
-        winsdk_bat().to_str().unwrap()
-    );
-
-    let output = Command::new("pwsh")
+    let output = Command::new("cmd")
         .envs([
             ("VSCMD_ARG_HOST_ARCH", "x64"),
             ("VSCMD_ARG_TGT_ARCH", "x64"),
         ])
-        .args(["-noni", "-nop", "-C", &script])
+        .args([
+            "/v:on",
+            "/C",
+            winsdk_bat().to_str().unwrap(),
+            ">",
+            "NUL",
+            "&",
+            "echo",
+            "!WindowsSdkVerBinPath!",
+        ])
         .output()
         .unwrap();
 
