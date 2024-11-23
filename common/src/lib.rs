@@ -46,12 +46,9 @@ pub fn winsdk_bat() -> PathBuf {
         .join("winsdk.bat")
 }
 
-pub fn windows_kit() -> PathBuf {
+pub fn windows_kit(arch: &str) -> PathBuf {
     let output = Command::new("cmd")
-        .envs([
-            ("VSCMD_ARG_HOST_ARCH", "x64"),
-            ("VSCMD_ARG_TGT_ARCH", "x64"),
-        ])
+        .envs([("VSCMD_ARG_HOST_ARCH", arch), ("VSCMD_ARG_TGT_ARCH", arch)])
         .args([
             "/v:on",
             "/C",
@@ -69,7 +66,7 @@ pub fn windows_kit() -> PathBuf {
 }
 
 pub fn resource_compiler() -> PathBuf {
-    windows_kit().join("x64").join("rc.exe")
+    windows_kit("x64").join("x64").join("rc.exe")
 }
 
 pub fn compile_resource(rc_file: PathBuf) {
