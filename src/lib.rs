@@ -26,7 +26,7 @@ pub struct Crane {
 }
 
 impl Crane {
-    pub fn new() -> Self {
+    pub fn init() -> Self {
         let app_data = unsafe {
             SHGetKnownFolderPath(
                 &FOLDERID_LocalAppData,

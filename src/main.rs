@@ -1,7 +1,7 @@
 use crane::*;
 
 fn main() {
-    let crane = Crane::new();
+    let crane = Crane::init();
 
     crane.run();
 }
