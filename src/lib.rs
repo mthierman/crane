@@ -99,7 +99,7 @@ impl Crane {
             for package in manifest.packages.iter() {
                 match package.split(":").nth(0) {
                     Some("http") | Some("https") => {
-                        let http = HTTP::new(package);
+                        let http = Http::new(package);
 
                         let mut out_dir = self.paths.packages.clone();
                         out_dir.push("http");

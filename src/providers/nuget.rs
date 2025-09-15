@@ -32,7 +32,7 @@ impl Nuget {
 
     pub fn download<P: AsRef<Path>>(&self, out_dir: &P) {
         Command::new("nuget")
-            .current_dir(&out_dir)
+            .current_dir(out_dir)
             .args(["install", &self.name, "-Version", &self.version])
             .output()
             .unwrap();

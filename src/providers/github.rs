@@ -46,7 +46,7 @@ impl GitHub {
     #[allow(dead_code)]
     pub fn download_gh_cli<P: AsRef<Path>>(&self, out_dir: &P) {
         Command::new("gh")
-            .current_dir(&out_dir)
+            .current_dir(out_dir)
             .args([
                 "repo",
                 "clone",
@@ -64,7 +64,7 @@ impl GitHub {
 
     pub fn download<P: AsRef<Path>>(&self, out_dir: &P) {
         Command::new("git")
-            .current_dir(&out_dir)
+            .current_dir(out_dir)
             .args([
                 "clone",
                 format!("https://github.com/{}/{}.git", &self.owner, &self.repo).as_str(),
@@ -78,7 +78,7 @@ impl GitHub {
 
     pub fn update<P: AsRef<Path>>(&self, out_dir: &P) {
         Command::new("git")
-            .current_dir(&out_dir)
+            .current_dir(out_dir)
             .args(["pull", "--depth=1", "--recurse-submodules"])
             .output()
             .unwrap();
