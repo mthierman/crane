@@ -28,14 +28,10 @@ pub struct Crane {
 impl Crane {
     pub fn init() -> Self {
         let app_data = unsafe {
-            SHGetKnownFolderPath(
-                &FOLDERID_LocalAppData,
-                KF_FLAG_DONT_VERIFY,
-                HANDLE::default(),
-            )
-            .unwrap()
-            .to_string()
-            .unwrap()
+            SHGetKnownFolderPath(&FOLDERID_LocalAppData, KF_FLAG_DONT_VERIFY, None)
+                .unwrap()
+                .to_string()
+                .unwrap()
         };
 
         let data = PathBuf::from(app_data).join("crane");

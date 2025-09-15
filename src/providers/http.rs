@@ -2,8 +2,8 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::process::Command;
 use url::Url;
-use windows::core::HSTRING;
 use windows::Win32::System::Com::Urlmon::URLDownloadToFileW;
+use windows::core::HSTRING;
 
 pub struct Http {
     pub url: Url,
