@@ -7,7 +7,7 @@ use std::fs::*;
 use std::io::BufReader;
 use std::os::windows::fs::symlink_dir;
 use std::path::PathBuf;
-use windows::Win32::{Foundation::HANDLE, UI::Shell::*};
+use windows::Win32::UI::Shell::*;
 
 #[derive(Deserialize, Debug)]
 struct Manifest {
